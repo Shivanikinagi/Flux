@@ -1,0 +1,308 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config();
+
+const movementService = require('./movementService');
+const twilioService = require('./twilioService');
+const logger = require('./utils/logger');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
+  message: 'Too many requests from this IP, please try again later.',
+});
+app.use('/api/', limiter);
+
+// Request logging
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.path}`, {
+    ip: req.ip,
+    userAgent: req.get('user-agent'),
+  });
+  next();
+});
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'ChatterPay API',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    network: 'Movement Testnet',
+  });
+});
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// API Routes
+const apiRouter = express.Router();
+
+// Register phone number
+apiRouter.post('/register', async (req, res) => {
+  try {
+    const { privateKeyHex, phone } = req.body;
+
+    if (!privateKeyHex || !phone) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: privateKeyHex, phone',
+      });
+    }
+
+    // Validate phone format
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid phone number format. Use E.164 format: +1234567890',
+      });
+    }
+
+    logger.info(`Registration request for phone: ${phone}`);
+
+    const result = await movementService.registerPhone(privateKeyHex, phone);
+
+    res.json({
+      success: true,
+      message: 'Phone number registered successfully',
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Registration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Registration failed',
+    });
+  }
+});
+
+// Send payment to phone number
+apiRouter.post('/send', async (req, res) => {
+  try {
+    const { privateKeyHex, recipientPhone, amount } = req.body;
+
+    if (!privateKeyHex || !recipientPhone || !amount) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: privateKeyHex, recipientPhone, amount',
+      });
+    }
+
+    // Validate phone format
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(recipientPhone)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid phone number format. Use E.164 format: +1234567890',
+      });
+    }
+
+    // Validate amount
+    const amountFloat = parseFloat(amount);
+    if (isNaN(amountFloat) || amountFloat <= 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid amount. Must be a positive number',
+      });
+    }
+
+    logger.info(`Payment request: ${amount} to ${recipientPhone}`);
+
+    const result = await movementService.sendPaymentToPhone(
+      privateKeyHex,
+      recipientPhone,
+      amount
+    );
+
+    res.json({
+      success: true,
+      message: 'Payment sent successfully',
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Payment error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Payment failed',
+    });
+  }
+});
+
+// Check if phone is registered
+apiRouter.get('/check-registration/:phone', async (req, res) => {
+  try {
+    const { phone } = req.params;
+
+    const isRegistered = await movementService.isPhoneRegistered(phone);
+
+    res.json({
+      success: true,
+      phone: phone,
+      isRegistered: isRegistered,
+    });
+  } catch (error) {
+    logger.error('Check registration error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Check failed',
+    });
+  }
+});
+
+// Get account balance
+apiRouter.get('/balance/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+
+    const balance = await movementService.getBalance(address);
+
+    res.json({
+      success: true,
+      address: address,
+      balance: balance,
+      balanceFormatted: `${balance / 100000000} APT`,
+    });
+  } catch (error) {
+    logger.error('Balance check error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Balance check failed',
+    });
+  }
+});
+
+// Get transaction history
+apiRouter.get('/transactions/:address', async (req, res) => {
+  try {
+    const { address } = req.params;
+
+    const transactions = await movementService.getTransactionHistory(address);
+
+    res.json({
+      success: true,
+      address: address,
+      transactions: transactions,
+    });
+  } catch (error) {
+    logger.error('Transaction history error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to fetch transaction history',
+    });
+  }
+});
+
+app.use('/api', apiRouter);
+
+// WhatsApp webhook endpoint
+app.post('/webhook', async (req, res) => {
+  try {
+    logger.info('Webhook received', { body: req.body });
+
+    const { From, Body } = req.body;
+
+    if (!From || !Body) {
+      return res.status(400).send('Invalid webhook data');
+    }
+
+    // Process WhatsApp message
+    await twilioService.handleIncomingMessage(From, Body);
+
+    res.status(200).send('OK');
+  } catch (error) {
+    logger.error('Webhook error:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Twilio status callback endpoint
+app.post('/status', (req, res) => {
+  logger.info('Status callback received', { body: req.body });
+  res.status(200).send('OK');
+});
+
+// Test Twilio connection
+app.get('/test-twilio', async (req, res) => {
+  try {
+    const result = await twilioService.sendMessage(
+      process.env.TWILIO_PHONE_NUMBER,
+      'Test message from ChatterPay!'
+    );
+
+    res.json({
+      success: true,
+      message: 'Test message sent',
+      sid: result,
+    });
+  } catch (error) {
+    logger.error('Twilio test error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  logger.error('Unhandled error:', err);
+  res.status(500).json({
+    success: false,
+    error: 'Internal server error',
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint not found',
+  });
+});
+
+// Start server
+const server = app.listen(PORT, () => {
+  logger.info(`🚀 ChatterPay server running on port ${PORT}`);
+  logger.info(`📡 Network: Movement Testnet`);
+  logger.info(`📝 Contract: ${process.env.CONTRACT_ADDRESS || 'Not configured'}`);
+  logger.info(`📱 Twilio: ${process.env.TWILIO_PHONE_NUMBER || 'Not configured'}`);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received, shutting down gracefully...');
+  server.close(() => {
+    logger.info('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received, shutting down gracefully...');
+  server.close(() => {
+    logger.info('Server closed');
+    process.exit(0);
+  });
+});
+
+module.exports = app;
