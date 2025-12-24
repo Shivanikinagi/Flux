@@ -1,0 +1,17 @@
+[package]
+name = "ChatterPay"
+version = "1.0.0"
+authors = ["ChatterPay Team"]
+
+[addresses]
+ChatterPay = "_"
+
+[dev-addresses]
+ChatterPay = "0xCAFE"
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "aptos-node-v1.8.0"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
