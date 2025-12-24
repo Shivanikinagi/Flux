@@ -1,0 +1,14 @@
+{
+  "name": "chatterpay-scripts",
+  "version": "1.0.0",
+  "description": "Deployment and utility scripts for ChatterPay",
+  "scripts": {
+    "deploy": "node deploy.js",
+    "initialize": "node initialize.js",
+    "test": "node test-integration.js"
+  },
+  "dependencies": {
+    "aptos": "^1.21.0",
+    "dotenv": "^16.3.1"
+  }
+}
