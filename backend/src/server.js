@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const movementService = require('./movementService');
 const twilioService = require('./twilioService');
+const nameMappingService = require('./nameMappingService');
 const logger = require('./utils/logger');
 
 const app = express();
@@ -17,6 +18,9 @@ app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Serve static frontend files
+app.use(express.static('../frontend'));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -57,15 +61,65 @@ app.get('/health', (req, res) => {
 // API Routes
 const apiRouter = express.Router();
 
+// Generate new wallet
+apiRouter.post('/generate-wallet', async (req, res) => {
+  try {
+    const wallet = await movementService.generateNewWallet();
+    
+    res.json({
+      success: true,
+      address: wallet.address,
+      privateKey: wallet.privateKey,
+      message: 'Wallet generated successfully. Keep your private key safe!',
+    });
+  } catch (error) {
+    logger.error('Wallet generation error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Wallet generation failed',
+    });
+  }
+});
+
+// Fund account via faucet
+apiRouter.post('/fund-account', async (req, res) => {
+  try {
+    const { address } = req.body;
+
+    if (!address) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required field: address',
+      });
+    }
+
+    logger.info(`Funding account: ${address}`);
+
+    const result = await movementService.fundAccount(address);
+
+    res.json({
+      success: true,
+      message: 'Account funded successfully',
+      data: result,
+    });
+  } catch (error) {
+    logger.error('Funding error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Funding failed',
+    });
+  }
+});
+
 // Register phone number
 apiRouter.post('/register', async (req, res) => {
   try {
-    const { privateKeyHex, phone } = req.body;
+    const { privateKey, phone, name, address } = req.body;
 
-    if (!privateKeyHex || !phone) {
+    if (!privateKey || !phone || !name || !address) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required fields: privateKeyHex, phone',
+        error: 'Missing required fields: privateKey, phone, name, address',
       });
     }
 
@@ -78,9 +132,22 @@ apiRouter.post('/register', async (req, res) => {
       });
     }
 
-    logger.info(`Registration request for phone: ${phone}`);
+    // Validate name
+    if (name.length < 2 || name.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name must be between 2 and 50 characters',
+      });
+    }
 
-    const result = await movementService.registerPhone(privateKeyHex, phone);
+    logger.info(`Registration request for phone: ${phone}, name: ${name}, address: ${address}`);
+
+    // Register on blockchain
+    const result = await movementService.registerPhone(privateKey, phone, name);
+
+    // Store name mapping
+    await nameMappingService.saveMapping(name, phone, address);
+    logger.info(`Name mapping saved: ${name} -> ${phone} -> ${address}`);
 
     res.json({
       success: true,

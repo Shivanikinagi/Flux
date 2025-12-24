@@ -1,6 +1,7 @@
 const twilio = require('twilio');
 const logger = require('./utils/logger');
 const movementService = require('./movementService');
+const nameMappingService = require('./nameMappingService');
 
 class TwilioService {
   constructor() {
@@ -71,20 +72,20 @@ class TwilioService {
         return;
       }
 
-      // Command: PAY <phone> <amount>
+      // Command: PAY <phone_or_name> <amount>
       if (parts[0].toUpperCase() === 'PAY') {
         if (parts.length < 3) {
           await this.sendMessage(
             from,
-            '❌ Invalid PAY command.\n\nUsage: PAY <phone> <amount>\nExample: PAY +1234567890 0.01'
+            '❌ Invalid PAY command.\n\nUsage: PAY <name_or_phone> <amount>\nExample: PAY Pavan 10\nExample: PAY +1234567890 10'
           );
           return;
         }
 
-        const recipientPhone = parts[1];
+        const recipient = parts[1];
         const amount = parts[2];
 
-        await this.handlePayment(from, recipientPhone, amount);
+        await this.handlePayment(from, recipient, amount);
         return;
       }
 
@@ -117,13 +118,15 @@ class TwilioService {
 
 📱 *REGISTER* - Register your phone with blockchain
 💰 *BALANCE* - Check your account balance
-💸 *PAY <phone> <amount>* - Send payment
-   Example: PAY +1234567890 0.01
+💸 *PAY <name_or_phone> <amount>* - Send payment
+   Example: PAY Pavan 10
+   Example: PAY +1234567890 10
 
 📊 *STATUS* - Check registration status
 ❓ *HELP* - Show this message
 
-Need more help? Visit our docs.
+✨ *New Feature:* You can now send payments using names!
+Register at our web app to link your name with your phone.
     `.trim();
 
     await this.sendMessage(to, helpMessage);
@@ -220,16 +223,34 @@ Address: ${address.substring(0, 10)}...
   /**
    * Handle payment
    */
-  async handlePayment(from, recipientPhone, amount) {
+  async handlePayment(from, recipient, amount) {
     try {
-      // Validate phone format
+      // Check if recipient is a name or phone number
+      let recipientPhone;
+      let recipientName;
+      let recipientAddress;
+
       const phoneRegex = /^\+[1-9]\d{1,14}$/;
-      if (!phoneRegex.test(recipientPhone)) {
-        await this.sendMessage(
-          from,
-          '❌ Invalid recipient phone format.\n\nUse international format: +1234567890'
-        );
-        return;
+      
+      if (phoneRegex.test(recipient)) {
+        // Recipient is a phone number
+        recipientPhone = recipient;
+        recipientName = await nameMappingService.getNameByPhone(recipientPhone);
+        recipientAddress = await nameMappingService.getAddressByPhone(recipientPhone);
+      } else {
+        // Recipient might be a name
+        const userInfo = await nameMappingService.getUserInfo(recipient);
+        if (userInfo) {
+          recipientPhone = userInfo.phone;
+          recipientName = userInfo.name;
+          recipientAddress = userInfo.address;
+        } else {
+          await this.sendMessage(
+            from,
+            `❌ Recipient "${recipient}" not found.\n\nMake sure the name or phone number is correct.`
+          );
+          return;
+        }
       }
 
       // Validate amount
@@ -243,8 +264,8 @@ Address: ${address.substring(0, 10)}...
       }
 
       // Check if sender is registered
-      const isSenderRegistered = await movementService.isPhoneRegistered(from);
-      if (!isSenderRegistered) {
+      const senderAddress = await nameMappingService.getAddressByPhone(from);
+      if (!senderAddress) {
         await this.sendMessage(
           from,
           '❌ Your phone is not registered.\n\nSend REGISTER to get started.'
@@ -253,19 +274,19 @@ Address: ${address.substring(0, 10)}...
       }
 
       // Check if recipient is registered
-      const isRecipientRegistered = await movementService.isPhoneRegistered(recipientPhone);
-      if (!isRecipientRegistered) {
+      if (!recipientAddress) {
         await this.sendMessage(
           from,
-          `❌ Recipient ${recipientPhone} is not registered.\n\nThey need to register first.`
+          `❌ Recipient ${recipientName || recipientPhone} is not registered.\n\nThey need to register first.`
         );
         return;
       }
 
       // Send processing message
+      const displayName = recipientName || recipientPhone;
       await this.sendMessage(
         from,
-        `⏳ Processing payment of ${amount} APT to ${recipientPhone}...\n\nPlease wait.`
+        `⏳ Processing payment of ${amount} MOVE to ${displayName}...\n\nPlease wait.`
       );
 
       // In a real implementation, you would:

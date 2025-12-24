@@ -23,6 +23,18 @@ class MovementService {
   }
 
   /**
+   * Generate a new wallet (keypair)
+   */
+  generateNewWallet() {
+    const account = new AptosAccount();
+    return {
+      address: account.address().hex(),
+      privateKey: `0x${Buffer.from(account.signingKey.secretKey).toString('hex').slice(0, 64)}`,
+      publicKey: account.pubKey().hex(),
+    };
+  }
+
+  /**
    * Create account from private key
    */
   getAccountFromPrivateKey(privateKeyHex) {
@@ -52,9 +64,60 @@ class MovementService {
   }
 
   /**
+   * Fund account via Movement Network faucet
+   */
+  async fundAccount(address) {
+    try {
+      logger.info(`Checking balance for address: ${address}`);
+
+      // First check if account exists and has balance
+      try {
+        const balance = await this.getBalance(address);
+        if (balance > 1000000) { // If has more than 0.01 MOVE
+          logger.info(`Account already has sufficient funds: ${balance} Octas`);
+          return { 
+            message: 'Account already funded',
+            balance: balance,
+            skipped: true 
+          };
+        }
+      } catch (error) {
+        // Account doesn't exist yet, continue to fund
+        logger.info('Account not found on-chain, will fund via faucet');
+      }
+
+      logger.info(`Requesting funds for address: ${address}`);
+
+      // Use the CLI command via child_process as a workaround
+      const { exec } = require('child_process');
+      const util = require('util');
+      const execPromise = util.promisify(exec);
+
+      const command = `aptos account fund-with-faucet --account ${address} --amount 100000000 --url https://testnet.movementnetwork.xyz/v1 --faucet-url https://faucet.testnet.movementnetwork.xyz`;
+      
+      const { stdout, stderr } = await execPromise(command);
+      
+      if (stderr && !stderr.includes('Result')) {
+        throw new Error(`Faucet command failed: ${stderr}`);
+      }
+
+      logger.info(`Account funded successfully: ${address}`);
+
+      return { 
+        message: 'Account funded successfully',
+        output: stdout,
+        funded: true
+      };
+    } catch (error) {
+      logger.error('Error funding account:', error);
+      throw new Error(`Failed to fund account: ${error.message}`);
+    }
+  }
+
+  /**
    * Register phone number to blockchain address
    */
-  async registerPhone(privateKeyHex, phone) {
+  async registerPhone(privateKeyHex, phone, name) {
     try {
       if (!this.contractAddress) {
         throw new Error('Contract address not configured');
@@ -63,15 +126,15 @@ class MovementService {
       const account = this.getAccountFromPrivateKey(privateKeyHex);
       const phoneHash = this.hashPhoneNumber(phone);
 
-      logger.info(`Registering phone for address: ${account.address().hex()}`);
+      logger.info(`Registering phone for address: ${account.address().hex()}, name: ${name}`);
 
       const payload = {
         type: 'entry_function_payload',
-        function: `${this.contractAddress}::phone_registry::register_phone`,
+        function: `${this.contractAddress}::phone_registry::register_user`,
         type_arguments: [],
         arguments: [
-          Array.from(phoneHash),
           this.contractAddress,
+          Array.from(phoneHash),
         ],
       };
 
@@ -88,6 +151,7 @@ class MovementService {
         transactionHash: transactionRes.hash,
         address: account.address().hex(),
         phoneHash: phoneHash.toString('hex'),
+        name: name,
       };
     } catch (error) {
       logger.error('Error registering phone:', error);
