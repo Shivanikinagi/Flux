@@ -49,7 +49,9 @@ class TwilioService {
    */
   async handleIncomingMessage(from, body) {
     try {
-      logger.info(`Message from ${from}: ${body}`);
+      // Normalize phone number - remove 'whatsapp:' prefix if present
+      const normalizedPhone = from.replace('whatsapp:', '');
+      logger.info(`Message from ${from} (normalized: ${normalizedPhone}): ${body}`);
 
       const command = body.trim().toUpperCase();
       const parts = body.trim().split(' ');
@@ -62,13 +64,13 @@ class TwilioService {
 
       // Command: REGISTER
       if (command === 'REGISTER') {
-        await this.handleRegister(from);
+        await this.handleRegister(from, normalizedPhone);
         return;
       }
 
       // Command: BALANCE
       if (command === 'BALANCE') {
-        await this.handleBalance(from);
+        await this.handleBalance(from, normalizedPhone);
         return;
       }
 
@@ -85,13 +87,13 @@ class TwilioService {
         const recipient = parts[1];
         const amount = parts[2];
 
-        await this.handlePayment(from, recipient, amount);
+        await this.handlePayment(from, normalizedPhone, recipient, amount);
         return;
       }
 
       // Command: STATUS
       if (command === 'STATUS') {
-        await this.handleStatus(from);
+        await this.handleStatus(from, normalizedPhone);
         return;
       }
 
@@ -135,14 +137,14 @@ Register at our web app to link your name with your phone.
   /**
    * Handle registration
    */
-  async handleRegister(from) {
+  async handleRegister(twilioFrom, normalizedPhone) {
     try {
-      // Check if already registered
-      const isRegistered = await movementService.isPhoneRegistered(from);
+      // Check if already registered using normalized phone
+      const userInfo = await nameMappingService.getUserInfo(normalizedPhone);
 
-      if (isRegistered) {
+      if (userInfo) {
         await this.sendMessage(
-          from,
+          twilioFrom,
           '✅ Your phone is already registered!\n\nYou can start sending and receiving payments.'
         );
         return;
@@ -154,17 +156,19 @@ Register at our web app to link your name with your phone.
       // 3. Register on blockchain
 
       await this.sendMessage(
-        from,
+        twilioFrom,
         `📝 *Registration Process*
 
 To complete registration:
-1. Create an account via our web app
-2. Link your phone number
-3. Your wallet will be created securely
+1. Visit: http://localhost:3000
+2. Enter your name and THIS phone number: ${normalizedPhone}
+3. Leave wallet fields empty to create new wallet
+4. Save your private key securely!
 
-Visit: https://chatterpay.app/register
-
-⚠️ Note: For security, wallet creation requires additional verification.
+✨ After registration, you can:
+• Check balance: BALANCE
+• Send payments by name: PAY Pavan 10
+• Send by phone: PAY +1234567890 10
         `.trim()
       );
     } catch (error) {
@@ -176,21 +180,22 @@ Visit: https://chatterpay.app/register
   /**
    * Handle balance check
    */
-  async handleBalance(from) {
+  async handleBalance(twilioFrom, normalizedPhone) {
     try {
-      // Check if registered
-      const isRegistered = await movementService.isPhoneRegistered(from);
+      // Check if registered in name mapping service using normalized phone
+      const userInfo = await nameMappingService.getUserInfo(normalizedPhone);
 
-      if (!isRegistered) {
+      if (!userInfo) {
         await this.sendMessage(
-          from,
-          '❌ Your phone is not registered.\n\nSend REGISTER to get started.'
+          twilioFrom,
+          '❌ Your phone is not registered.\n\nRegister at: http://localhost:3000\nEnter your name, phone, and create a wallet!'
         );
         return;
       }
 
-      // Get address from phone
-      const address = await movementService.getAddressFromPhone(from);
+      // Get address from name mapping
+      const address = userInfo.address;
+      const name = userInfo.name;
 
       // Get balance
       const balance = await movementService.getBalance(address);
@@ -203,7 +208,8 @@ Visit: https://chatterpay.app/register
         from,
         `💰 *Your Balance*
 
-Balance: ${balanceFormatted} APT
+Name: ${name}
+Balance: ${balanceFormatted} MOVE
 Address: ${address.substring(0, 10)}...
 
 📊 Transactions:
@@ -214,7 +220,7 @@ Address: ${address.substring(0, 10)}...
     } catch (error) {
       logger.error('Error handling balance check:', error);
       await this.sendMessage(
-        from,
+        twilioFrom,
         '❌ Could not fetch balance. Please try again later.'
       );
     }
@@ -223,7 +229,7 @@ Address: ${address.substring(0, 10)}...
   /**
    * Handle payment
    */
-  async handlePayment(from, recipient, amount) {
+  async handlePayment(twilioFrom, normalizedPhone, recipient, amount) {
     try {
       // Check if recipient is a name or phone number
       let recipientPhone;
@@ -246,7 +252,7 @@ Address: ${address.substring(0, 10)}...
           recipientAddress = userInfo.address;
         } else {
           await this.sendMessage(
-            from,
+            twilioFrom,
             `❌ Recipient "${recipient}" not found.\n\nMake sure the name or phone number is correct.`
           );
           return;
@@ -257,17 +263,17 @@ Address: ${address.substring(0, 10)}...
       const amountFloat = parseFloat(amount);
       if (isNaN(amountFloat) || amountFloat <= 0) {
         await this.sendMessage(
-          from,
+          twilioFrom,
           '❌ Invalid amount.\n\nAmount must be a positive number.'
         );
         return;
       }
 
       // Check if sender is registered
-      const senderAddress = await nameMappingService.getAddressByPhone(from);
+      const senderAddress = await nameMappingService.getAddressByPhone(normalizedPhone);
       if (!senderAddress) {
         await this.sendMessage(
-          from,
+          twilioFrom,
           '❌ Your phone is not registered.\n\nSend REGISTER to get started.'
         );
         return;
@@ -276,7 +282,7 @@ Address: ${address.substring(0, 10)}...
       // Check if recipient is registered
       if (!recipientAddress) {
         await this.sendMessage(
-          from,
+          twilioFrom,
           `❌ Recipient ${recipientName || recipientPhone} is not registered.\n\nThey need to register first.`
         );
         return;
@@ -285,39 +291,45 @@ Address: ${address.substring(0, 10)}...
       // Send processing message
       const displayName = recipientName || recipientPhone;
       await this.sendMessage(
-        from,
+        twilioFrom,
         `⏳ Processing payment of ${amount} MOVE to ${displayName}...\n\nPlease wait.`
       );
 
-      // In a real implementation, you would:
-      // 1. Retrieve sender's private key from secure storage
-      // 2. Execute the payment transaction
-      // 3. Send confirmation
+      // Get sender's private key from storage
+      const senderPrivateKey = await nameMappingService.getPrivateKeyByPhone(normalizedPhone);
+      
+      if (!senderPrivateKey) {
+        await this.sendMessage(
+          twilioFrom,
+          `❌ *Payment Failed*\n\nYour account doesn't have a private key stored.\n\nTo enable WhatsApp payments:\n1. Visit: http://localhost:3000\n2. Re-register with your private key\n3. Or use API: POST /api/send`
+        );
+        return;
+      }
 
-      // For demo purposes, we'll send a note about the API usage
-      await this.sendMessage(
-        from,
-        `ℹ️ *Payment Initiated*
+      // Execute the payment transaction
+      try {
+        const result = await movementService.sendPaymentToPhone(
+          senderPrivateKey,
+          recipientPhone,
+          amount
+        );
 
-For security, payments via WhatsApp require:
-1. Authentication via our app
-2. Transaction signing
-
-Use our API endpoint instead:
-POST /api/send
-{
-  "privateKeyHex": "your_key",
-  "recipientPhone": "${recipientPhone}",
-  "amount": "${amount}"
-}
-
-Visit our docs for details.
-        `.trim()
-      );
+        await this.sendMessage(
+          twilioFrom,
+          `✅ *Payment Sent!*\n\nAmount: ${amount} MOVE\nTo: ${displayName}\nTx: ${result.hash.substring(0, 10)}...${result.hash.slice(-6)}\n\nView: https://explorer.movementnetwork.xyz/txn/${result.hash}`
+        );
+      } catch (txError) {
+        logger.error('Transaction failed:', txError);
+        await this.sendMessage(
+          twilioFrom,
+          `❌ *Transaction Failed*\n\n${txError.message || 'Please check your balance and try again.'}`
+        );
+        return;
+      }
     } catch (error) {
       logger.error('Error handling payment:', error);
       await this.sendMessage(
-        from,
+        twilioFrom,
         '❌ Payment failed. Please try again later.'
       );
     }
@@ -326,29 +338,32 @@ Visit our docs for details.
   /**
    * Handle status check
    */
-  async handleStatus(from) {
+  async handleStatus(twilioFrom, normalizedPhone) {
     try {
-      const isRegistered = await movementService.isPhoneRegistered(from);
+      const userInfo = await nameMappingService.getUserInfo(normalizedPhone);
 
-      if (isRegistered) {
-        const address = await movementService.getAddressFromPhone(from);
+      if (userInfo) {
+        const address = userInfo.address;
+        const name = userInfo.name;
         const balance = await movementService.getBalance(address);
         const balanceFormatted = (balance / 100000000).toFixed(8);
 
         await this.sendMessage(
-          from,
+          twilioFrom,
           `✅ *Account Status: Active*
 
-Phone: ${from}
+Name: ${name}
+
+Phone: ${normalizedPhone}
 Address: ${address.substring(0, 10)}...${address.slice(-6)}
-Balance: ${balanceFormatted} APT
+Balance: ${balanceFormatted} MOVE
 
 You can send and receive payments!
           `.trim()
         );
       } else {
         await this.sendMessage(
-          from,
+          twilioFrom,
           `📱 *Account Status: Not Registered*
 
 Send REGISTER to get started!
@@ -358,7 +373,7 @@ Send REGISTER to get started!
     } catch (error) {
       logger.error('Error checking status:', error);
       await this.sendMessage(
-        from,
+        twilioFrom,
         '❌ Could not check status. Please try again later.'
       );
     }

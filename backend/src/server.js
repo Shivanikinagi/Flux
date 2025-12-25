@@ -8,6 +8,7 @@ require('dotenv').config();
 const movementService = require('./movementService');
 const twilioService = require('./twilioService');
 const nameMappingService = require('./nameMappingService');
+const networkManager = require('../config/networkManager');
 const logger = require('./utils/logger');
 
 const app = express();
@@ -41,25 +42,99 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get('/', (req, res) => {
+  const networkInfo = networkManager.getNetworkInfo();
   res.json({
     status: 'online',
     service: 'ChatterPay API',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    network: 'Movement Testnet',
+    network: networkInfo.name,
+    chainId: networkInfo.chainId,
+    currency: networkInfo.currency,
   });
 });
 
 app.get('/health', (req, res) => {
+  const networkInfo = networkManager.getNetworkInfo();
   res.json({
     status: 'healthy',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
+    network: networkInfo,
   });
 });
 
 // API Routes
 const apiRouter = express.Router();
+
+// Network management endpoints
+apiRouter.get('/networks', (req, res) => {
+  try {
+    const networks = networkManager.getAllNetworks();
+    res.json({
+      success: true,
+      networks,
+      active: networkManager.getActiveNetwork().key
+    });
+  } catch (error) {
+    logger.error('Error fetching networks:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+apiRouter.get('/networks/active', (req, res) => {
+  try {
+    const network = networkManager.getActiveNetwork();
+    res.json({
+      success: true,
+      network
+    });
+  } catch (error) {
+    logger.error('Error fetching active network:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+apiRouter.post('/networks/switch', (req, res) => {
+  try {
+    const { networkKey } = req.body;
+    
+    if (!networkKey) {
+      return res.status(400).json({
+        success: false,
+        error: 'networkKey is required'
+      });
+    }
+
+    const network = networkManager.switchNetwork(networkKey);
+    
+    // Update movement service with new network URL
+    process.env.MOVEMENT_RPC_URL = network.rpcUrl;
+    
+    res.json({
+      success: true,
+      message: `Switched to ${network.name}`,
+      network
+    });
+  } catch (error) {
+    logger.error('Error switching network:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+});
+
+// Get all registered users
+apiRouter.get('/users', async (req, res) => {
+  try {
+    const users = await nameMappingService.getAllMappings();
+    res.json(users);
+  } catch (error) {
+    logger.error('Error fetching users:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Failed to fetch users',
+    });
+  }
+});
 
 // Generate new wallet
 apiRouter.post('/generate-wallet', async (req, res) => {
@@ -142,12 +217,23 @@ apiRouter.post('/register', async (req, res) => {
 
     logger.info(`Registration request for phone: ${phone}, name: ${name}, address: ${address}`);
 
-    // Register on blockchain
-    const result = await movementService.registerPhone(privateKey, phone, name);
+    // Try to register on blockchain (will use update if already registered)
+    let result;
+    try {
+      result = await movementService.registerPhone(privateKey, phone, name);
+    } catch (error) {
+      // If already registered, try updating instead
+      if (error.message && error.message.includes('PHONE_ALREADY_REGISTERED')) {
+        logger.info(`Phone already registered, updating instead`);
+        result = await movementService.updatePhone(privateKey, phone, name);
+      } else {
+        throw error;
+      }
+    }
 
-    // Store name mapping
-    await nameMappingService.saveMapping(name, phone, address);
-    logger.info(`Name mapping saved: ${name} -> ${phone} -> ${address}`);
+    // Store name mapping WITH private key
+    await nameMappingService.saveMapping(name, phone, address, privateKey);
+    logger.info(`Name mapping saved: ${name} -> ${phone} -> ${address} (with private key)`);
 
     res.json({
       success: true,

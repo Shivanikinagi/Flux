@@ -47,13 +47,18 @@ class NameMappingService {
         }
     }
 
-    async saveMapping(name, phone, address) {
+    async saveMapping(name, phone, address, privateKey = null) {
         await this.initialize();
 
         const normalizedName = name.toLowerCase();
         
-        // Store the mapping
-        this.mappings.set(normalizedName, { phone, address, name }); // Store original case too
+        // Store the mapping with optional private key
+        const mappingData = { phone, address, name };
+        if (privateKey) {
+            mappingData.privateKey = privateKey;
+        }
+        
+        this.mappings.set(normalizedName, mappingData);
         this.phoneToName.set(phone, name);
         this.phoneToAddress.set(phone, address);
 
@@ -130,6 +135,16 @@ class NameMappingService {
             result.push({ name: info.name, phone: info.phone, address: info.address });
         }
         return result;
+    }
+
+    async getPrivateKeyByPhone(phone) {
+        await this.initialize();
+        const name = this.phoneToName.get(phone);
+        if (!name) return null;
+        
+        const normalizedName = name.toLowerCase();
+        const mapping = this.mappings.get(normalizedName);
+        return mapping && mapping.privateKey ? mapping.privateKey : null;
     }
 }
 
