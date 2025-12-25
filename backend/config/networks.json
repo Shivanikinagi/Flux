@@ -1,0 +1,198 @@
+{
+  "networks": {
+    "movement-bardock": {
+      "name": "Movement Bardock Testnet",
+      "rpcUrl": "https://testnet.movementnetwork.xyz/v1",
+      "faucetUrl": "https://faucet.testnet.movementnetwork.xyz/",
+      "chainId": "250",
+      "explorerUrl": "https://explorer.movementnetwork.xyz/",
+      "currency": "MOVE",
+      "type": "aptos",
+      "active": true
+    },
+    "movement-devnet": {
+      "name": "Movement Devnet",
+      "rpcUrl": "https://devnet.movementnetwork.xyz/v1",
+      "faucetUrl": "https://faucet.devnet.movementnetwork.xyz/",
+      "chainId": "251",
+      "explorerUrl": "https://explorer.devnet.movementnetwork.xyz/",
+      "currency": "MOVE",
+      "type": "aptos",
+      "active": false
+    },
+    "aptos-testnet": {
+      "name": "Aptos Testnet",
+      "rpcUrl": "https://fullnode.testnet.aptoslabs.com/v1",
+      "faucetUrl": "https://faucet.testnet.aptoslabs.com",
+      "chainId": "2",
+      "explorerUrl": "https://explorer.aptoslabs.com/?network=testnet",
+      "currency": "APT",
+      "type": "aptos",
+      "active": false
+    },
+    "aptos-devnet": {
+      "name": "Aptos Devnet",
+      "rpcUrl": "https://fullnode.devnet.aptoslabs.com/v1",
+      "faucetUrl": "https://faucet.devnet.aptoslabs.com",
+      "chainId": "69",
+      "explorerUrl": "https://explorer.aptoslabs.com/?network=devnet",
+      "currency": "APT",
+      "type": "aptos",
+      "active": false
+    },
+    "movement-m2": {
+      "name": "Movement M2 Testnet",
+      "rpcUrl": "https://mevm.devnet.m2.movementlabs.xyz",
+      "faucetUrl": "https://faucet.movementlabs.xyz/",
+      "chainId": "30732",
+      "explorerUrl": "https://explorer.devnet.m2.movementlabs.xyz/",
+      "currency": "MOVE",
+      "type": "evm",
+      "active": false
+    },
+    "sui-testnet": {
+      "name": "Sui Testnet",
+      "rpcUrl": "https://fullnode.testnet.sui.io:443",
+      "faucetUrl": "https://faucet.testnet.sui.io/",
+      "chainId": "testnet",
+      "explorerUrl": "https://suiexplorer.com/?network=testnet",
+      "currency": "SUI",
+      "type": "sui",
+      "active": false,
+      "note": "Requires Sui SDK (not compatible with current Aptos setup)"
+    },
+    "polygon-mumbai": {
+      "name": "Polygon Mumbai Testnet",
+      "rpcUrl": "https://rpc-mumbai.maticvigil.com",
+      "faucetUrl": "https://faucet.polygon.technology/",
+      "chainId": "80001",
+      "explorerUrl": "https://mumbai.polygonscan.com/",
+      "currency": "MATIC",
+      "type": "evm",
+      "active": false,
+      "note": "EVM-compatible (requires Web3 integration)"
+    },
+    "polygon-amoy": {
+      "name": "Polygon Amoy Testnet",
+      "rpcUrl": "https://rpc-amoy.polygon.technology",
+      "faucetUrl": "https://faucet.polygon.technology/",
+      "chainId": "80002",
+      "explorerUrl": "https://amoy.polygonscan.com/",
+      "currency": "POL",
+      "type": "evm",
+      "active": false,
+      "note": "New Polygon testnet (EVM-compatible)"
+    },
+    "ethereum-sepolia": {
+      "name": "Ethereum Sepolia Testnet",
+      "rpcUrl": "https://rpc.sepolia.org",
+      "faucetUrl": "https://sepoliafaucet.com/",
+      "chainId": "11155111",
+      "explorerUrl": "https://sepolia.etherscan.io/",
+      "currency": "SepoliaETH",
+      "type": "evm",
+      "active": false,
+      "note": "EVM-compatible (requires Web3 integration)"
+    },
+    "arbitrum-sepolia": {
+      "name": "Arbitrum Sepolia Testnet",
+      "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+      "faucetUrl": "https://faucet.arbitrum.io/",
+      "chainId": "421614",
+      "explorerUrl": "https://sepolia.arbiscan.io/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "Layer 2 testnet (EVM-compatible)"
+    },
+    "optimism-sepolia": {
+      "name": "Optimism Sepolia Testnet",
+      "rpcUrl": "https://sepolia.optimism.io",
+      "faucetUrl": "https://app.optimism.io/faucet",
+      "chainId": "11155420",
+      "explorerUrl": "https://sepolia-optimism.etherscan.io/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "Layer 2 testnet (EVM-compatible)"
+    },
+    "base-sepolia": {
+      "name": "Base Sepolia Testnet",
+      "rpcUrl": "https://sepolia.base.org",
+      "faucetUrl": "https://www.coinbase.com/faucets/base-sepolia-faucet",
+      "chainId": "84532",
+      "explorerUrl": "https://sepolia.basescan.org/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "Coinbase L2 testnet (EVM-compatible)"
+    },
+    "avalanche-fuji": {
+      "name": "Avalanche Fuji Testnet",
+      "rpcUrl": "https://api.avax-test.network/ext/bc/C/rpc",
+      "faucetUrl": "https://faucet.avax.network/",
+      "chainId": "43113",
+      "explorerUrl": "https://testnet.snowtrace.io/",
+      "currency": "AVAX",
+      "type": "evm",
+      "active": false,
+      "note": "EVM-compatible"
+    },
+    "bnb-testnet": {
+      "name": "BNB Smart Chain Testnet",
+      "rpcUrl": "https://data-seed-prebsc-1-s1.binance.org:8545",
+      "faucetUrl": "https://testnet.bnbchain.org/faucet-smart",
+      "chainId": "97",
+      "explorerUrl": "https://testnet.bscscan.com/",
+      "currency": "tBNB",
+      "type": "evm",
+      "active": false,
+      "note": "EVM-compatible"
+    },
+    "starknet-sepolia": {
+      "name": "Starknet Sepolia Testnet",
+      "rpcUrl": "https://starknet-sepolia.public.blastapi.io",
+      "faucetUrl": "https://faucet.starknet.io/",
+      "chainId": "SN_SEPOLIA",
+      "explorerUrl": "https://sepolia.starkscan.co/",
+      "currency": "STRK",
+      "type": "starknet",
+      "active": false,
+      "note": "Cairo-based (requires Starknet SDK)"
+    },
+    "zksync-sepolia": {
+      "name": "zkSync Sepolia Testnet",
+      "rpcUrl": "https://sepolia.era.zksync.dev",
+      "faucetUrl": "https://portal.zksync.io/faucet",
+      "chainId": "300",
+      "explorerUrl": "https://sepolia.explorer.zksync.io/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "zkEVM L2 testnet"
+    },
+    "scroll-sepolia": {
+      "name": "Scroll Sepolia Testnet",
+      "rpcUrl": "https://sepolia-rpc.scroll.io",
+      "faucetUrl": "https://sepolia.scroll.io/faucet",
+      "chainId": "534351",
+      "explorerUrl": "https://sepolia.scrollscan.com/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "zkEVM L2 testnet"
+    },
+    "linea-sepolia": {
+      "name": "Linea Sepolia Testnet",
+      "rpcUrl": "https://rpc.sepolia.linea.build",
+      "faucetUrl": "https://faucet.goerli.linea.build/",
+      "chainId": "59141",
+      "explorerUrl": "https://sepolia.lineascan.build/",
+      "currency": "ETH",
+      "type": "evm",
+      "active": false,
+      "note": "zkEVM L2 testnet"
+    }
+  },
+  "activeNetwork": "movement-bardock"
+}
