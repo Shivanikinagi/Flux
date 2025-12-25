@@ -13,10 +13,11 @@ module ChatterPay::phone_registry {
     const E_UNAUTHORIZED: u64 = 3;
     const E_REGISTRY_NOT_INITIALIZED: u64 = 4;
 
-    /// Simple entry mapping a phone_hash (vector<u8>) to an owner address
+    /// Simple entry mapping a phone_hash (vector<u8>) to an owner address with name
     struct Entry has copy, drop, store {
         phone_hash: vector<u8>,
         owner: address,
+        name: vector<u8>,  // User's display name
     }
 
     /// Registry stored under the deployer account
@@ -30,6 +31,7 @@ module ChatterPay::phone_registry {
     struct UserRegisteredEvent has drop, store {
         phone_hash: vector<u8>,
         address: address,
+        name: vector<u8>,
         timestamp: u64,
     }
 
@@ -71,7 +73,7 @@ module ChatterPay::phone_registry {
 
     /// Register the caller's address under `phone_hash`
     /// Fails if the phone is already registered
-    public entry fun register_user(account: &signer, registry_addr: address, phone_hash: vector<u8>) 
+    public entry fun register_user(account: &signer, registry_addr: address, phone_hash: vector<u8>, name: vector<u8>) 
     acquires Registry {
         assert!(exists<Registry>(registry_addr), E_REGISTRY_NOT_INITIALIZED);
         
@@ -89,7 +91,7 @@ module ChatterPay::phone_registry {
         
         // Register new entry
         let caller = signer::address_of(account);
-        let new_entry = Entry { phone_hash: phone_hash, owner: caller };
+        let new_entry = Entry { phone_hash: phone_hash, owner: caller, name: name };
         vector::push_back(&mut reg_ref.entries, new_entry);
         
         // Emit registration event
@@ -98,13 +100,14 @@ module ChatterPay::phone_registry {
             UserRegisteredEvent {
                 phone_hash,
                 address: caller,
+                name,
                 timestamp: timestamp::now_seconds(),
             }
         );
     }
 
     /// Update phone hash for caller
-    public entry fun update_user(account: &signer, registry_addr: address, new_phone_hash: vector<u8>) 
+    public entry fun update_user(account: &signer, registry_addr: address, new_phone_hash: vector<u8>, name: vector<u8>) 
     acquires Registry {
         assert!(exists<Registry>(registry_addr), E_REGISTRY_NOT_INITIALIZED);
         
@@ -125,7 +128,7 @@ module ChatterPay::phone_registry {
         };
         
         // Add new entry
-        let new_entry = Entry { phone_hash: new_phone_hash, owner: caller };
+        let new_entry = Entry { phone_hash: new_phone_hash, owner: caller, name: name };
         vector::push_back(&mut reg_ref.entries, new_entry);
         
         // Emit registration event (for update)
@@ -134,6 +137,7 @@ module ChatterPay::phone_registry {
             UserRegisteredEvent {
                 phone_hash: new_phone_hash,
                 address: caller,
+                name,
                 timestamp: timestamp::now_seconds(),
             }
         );
@@ -270,8 +274,10 @@ module ChatterPay::phone_registry_tests {
 
 
 
-//rivate_key: "0x74c2ac8ec286c81be43dfc3175ca9df543c3390c208d816d857db3704c375bf8"
+//Private_key: "0x74c2ac8ec286c81be43dfc3175ca9df543c3390c208d816d857db3704c375bf8"
    // public_key: "0xaf13cc534d7c5097437fb52fd7dc3ce7c8e865be2b8e244979830b7d4187a6bf"
     //account: 7a9ea50052a16a735b75491d961ac61d9eae45584c1f789a4d93d99132c240a9
     //rest_url: "https://fullnode.testnet.aptoslabs.com"
     //faucet_url: "https://faucet.testnet.aptoslabs.com"
+    //0x74c2ac8ec286c81be43dfc3175ca9df543c3390c208d816d857db3704c375bf8
+    //0x74c2ac8ec286c81be43dfc3175ca9df543c3390c208d816d857db3704c375bf8- SERVER_PRIVATE_KEY - 

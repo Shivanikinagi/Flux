@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatterPay - Register</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .registered-users {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .registered-users h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .user-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .user-card h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-card p {
+            color: #666;
+            font-size: 0.9em;
+            margin: 3px 0;
+        }
+
+        .no-users {
+            color: #999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .wallet-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .wallet-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .wallet-address {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .private-key {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ffc107;
+            margin-bottom: 15px;
+        }
+
+        .private-key strong {
+            color: #856404;
+        }
+
+        .private-key code {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            word-break: break-all;
+            font-size: 0.85em;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .instructions h4 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: right; margin-bottom: 10px;">
+            <a href="/networks.html" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px; font-size: 0.9em;">
+                🌐 Network Settings
+            </a>
+        </div>
+        <div class="logo">
+            <h1>🌟 ChatterPay</h1>
+            <p>WhatsApp Crypto Payments on Movement Network</p>
+        </div>
+
+        <!-- Registered Users List -->
+        <div class="registered-users" id="registeredUsers">
+            <h3>👥 Registered Users</h3>
+            <div id="usersList">
+                <p class="no-users">No users registered yet. Add your first user below!</p>
+            </div>
+        </div>
+
+        <h3 style="color: #667eea; margin-bottom: 20px;">➕ Add New User</h3>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">👤 Your Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    placeholder="Enter your name" 
+                    required
+                    maxlength="50"
+                >
+                <small style="color: #666;">This will be displayed when sending/receiving payments</small>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">📱 WhatsApp Phone Number</label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    placeholder="+1234567890" 
+                    required
+                    pattern="\+[1-9]\d{1,14}"
+                    title="Enter phone in E.164 format: +1234567890"
+                >
+                <small style="color: #666;">Format: +[country code][number] (e.g., +919545296699)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="walletAddress">🔑 Wallet Address (Optional)</label>
+                <input 
+                    type="text" 
+                    id="walletAddress" 
+                    placeholder="0x... or leave empty to create new wallet"
+                    pattern="0x[a-fA-F0-9]{64}"
+                >
+                <small style="color: #666;">Leave empty to create a new wallet automatically</small>
+            </div>
+
+            <div class="form-group" id="privateKeyGroup" style="display: none;">
+                <label for="privateKeyInput">🔐 Private Key (Required if using existing wallet)</label>
+                <input 
+                    type="password" 
+                    id="privateKeyInput" 
+                    placeholder="0x..."
+                >
+                <small style="color: #666;">Only needed if you entered a wallet address above</small>
+            </div>
+
+            <button type="submit" class="btn" id="registerBtn">
+                Create Wallet & Register
+            </button>
+        </form>
+
+        <div class="loader" id="loader"></div>
+
+        <div class="message" id="message"></div>
+
+        <div class="wallet-info" id="walletInfo">
+            <h3>✅ Wallet Created Successfully!</h3>
+            
+            <div>
+                <strong>Your Wallet Address:</strong>
+                <div class="wallet-address" id="walletAddress"></div>
+                <button class="copy-btn" onclick="copyAddress()">📋 Copy Address</button>
+            </div>
+
+            <div class="private-key">
+                <strong>⚠️ IMPORTANT: Save Your Private Key</strong>
+                <code id="privateKey"></code>
+                <button class="copy-btn" onclick="copyPrivateKey()">📋 Copy Private Key</button>
+                <p style="margin-top: 10px; color: #856404; font-size: 0.9em;">
+                    Never share this key! Store it in a secure location.
+                </p>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h4>📝 Next Steps:</h4>
+            <ol>
+                <li>Save your private key securely (you'll need it to send payments)</li>
+                <li>Send a WhatsApp message to: <strong>+14155238886</strong></li>
+                <li>Type <strong>REGISTER</strong> to complete verification</li>
+                <li>Check your balance with <strong>BALANCE</strong></li>
+                <li>Send payments with <strong>PAY +phonenumber amount</strong></li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

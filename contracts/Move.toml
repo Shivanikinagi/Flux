@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = ["ChatterPay Team"]
 
 [addresses]
-ChatterPay = "_"
+ChatterPay = "0x7a9ea50052a16a735b75491d961ac61d9eae45584c1f789a4d93d99132c240a9"
 
 [dev-addresses]
 ChatterPay = "0xCAFE"

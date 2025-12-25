@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatterPay - Network Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .current-network {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .current-network h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .network-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            display: block;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .info-item value {
+            display: block;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .networks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .network-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .network-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .network-card.active {
+            border: 3px solid #667eea;
+            background: linear-gradient(135deg, #f5f7ff 0%, #ffffff 100%);
+        }
+
+        .network-card.active::before {
+            content: "✓ ACTIVE";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .network-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .network-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .network-details {
+            margin-bottom: 15px;
+        }
+
+        .network-details p {
+            margin: 8px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .network-details strong {
+            color: #333;
+        }
+
+        .network-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+
+        .network-note {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #856404;
+            border-radius: 5px;
+        }
+
+        .switch-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: opacity 0.3s;
+        }
+
+        .switch-btn:hover {
+            opacity: 0.9;
+        }
+
+        .switch-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            transition: background 0.3s;
+        }
+
+        .back-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+        
+        <div class="header">
+            <h1>🌐 Network Settings</h1>
+            <p>Switch between different blockchain testnets</p>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <div class="current-network">
+            <h2>📡 Current Network</h2>
+            <div id="currentNetworkInfo" class="network-info">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <h2 style="color: white; margin-bottom: 20px;">Available Networks</h2>
+        <div id="networksGrid" class="networks-grid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function loadNetworks() {
+            try {
+                const response = await fetch(`${API_URL}/api/networks`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayCurrentNetwork(data.active, data.networks);
+                    displayNetworksList(data.networks, data.active);
+                }
+            } catch (error) {
+                showMessage('Failed to load networks: ' + error.message, 'error');
+            }
+        }
+
+        function displayCurrentNetwork(activeKey, networks) {
+            const network = networks.find(n => n.key === activeKey);
+            const container = document.getElementById('currentNetworkInfo');
+            
+            container.innerHTML = `
+                <div class="info-item">
+                    <label>Network Name</label>
+                    <value>${network.name}</value>
+                </div>
+                <div class="info-item">
+                    <label>Chain ID</label>
+                    <value>${network.chainId}</value>
+                </div>
+                <div class="info-item">
+                    <label>Currency</label>
+                    <value>${network.currency}</value>
+                </div>
+                <div class="info-item">
+                    <label>Type</label>
+                    <value>${network.type.toUpperCase()}</value>
+                </div>
+                <div class="info-item">
+                    <label>RPC URL</label>
+                    <value>${network.rpcUrl}</value>
+                </div>
+                <div class="info-item">
+                    <label>Explorer</label>
+                    <value><a href="${network.explorerUrl}" target="_blank">View Explorer</a></value>
+                </div>
+            `;
+        }
+
+        function displayNetworksList(networks, activeKey) {
+            const container = document.getElementById('networksGrid');
+            
+            container.innerHTML = networks.map(network => {
+                const isActive = network.key === activeKey;
+                const isDisabled = network.type !== 'aptos'; // Only Aptos-compatible networks supported
+                
+                return `
+                    <div class="network-card ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}" 
+                         onclick="${!isDisabled && !isActive ? `switchNetwork('${network.key}')` : 'return false;'}">
+                        <h3>${network.name}</h3>
+                        <div class="network-details">
+                            <p><strong>Chain ID:</strong> ${network.chainId}</p>
+                            <p><strong>Currency:</strong> ${network.currency}</p>
+                            <p><strong>Type:</strong> ${network.type.toUpperCase()}</p>
+                            <p><strong>RPC:</strong> ${network.rpcUrl.substring(0, 40)}...</p>
+                        </div>
+                        <span class="network-badge">${network.type.toUpperCase()}</span>
+                        ${network.note ? `<div class="network-note">⚠️ ${network.note}</div>` : ''}
+                        <button class="switch-btn" ${isDisabled || isActive ? 'disabled' : ''}>
+                            ${isActive ? 'Currently Active' : isDisabled ? 'Not Compatible' : 'Switch Network'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function switchNetwork(networkKey) {
+            try {
+                showMessage('Switching network...', 'success');
+                
+                const response = await fetch(`${API_URL}/api/networks/switch`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ networkKey })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage(`✅ Successfully switched to ${data.network.name}!`, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showMessage('❌ ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Failed to switch network: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+        }
+
+        // Load networks on page load
+        loadNetworks();
+    </script>
+</body>
+</html>
