@@ -416,6 +416,36 @@ app.get('/test-twilio', async (req, res) => {
   }
 });
 
+// Test Twilio endpoint to check if limits reset
+app.post('/api/test-twilio', async (req, res) => {
+  try {
+    const { to, message } = req.body;
+    
+    if (!to || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: to, message'
+      });
+    }
+
+    // Send test message via Twilio
+    const result = await twilioService.sendMessage(to, message);
+    
+    res.json({
+      success: true,
+      sid: result.sid,
+      status: result.status,
+      message: 'Twilio is working! Daily limit has reset.'
+    });
+  } catch (error) {
+    logger.error('Twilio test failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   logger.error('Unhandled error:', err);

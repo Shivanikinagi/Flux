@@ -116,19 +116,29 @@ class TwilioService {
    */
   async sendHelpMessage(to) {
     const helpMessage = `
-🌟 *ChatterPay Commands*
+*CHATTERPAY - COMMAND REFERENCE*
 
-📱 *REGISTER* - Register your phone with blockchain
-💰 *BALANCE* - Check your account balance
-💸 *PAY <name_or_phone> <amount>* - Send payment
-   Example: PAY Pavan 10
-   Example: PAY +1234567890 10
+*REGISTER*
+Register your phone number with the blockchain network
 
-📊 *STATUS* - Check registration status
-❓ *HELP* - Show this message
+*BALANCE*
+Check your current wallet balance and transaction history
 
-✨ *New Feature:* You can now send payments using names!
-Register at our web app to link your name with your phone.
+*PAY <recipient> <amount>*
+Send payment to a registered user
+Examples:
+  PAY Pavan 10
+  PAY +1234567890 10
+
+*STATUS*
+View your account registration status and details
+
+*HELP*
+Display this command reference
+
+---
+NAME-BASED PAYMENTS:
+Register at http://localhost:3000 to link your name with your wallet and enable sending payments by name.
     `.trim();
 
     await this.sendMessage(to, helpMessage);
@@ -145,7 +155,7 @@ Register at our web app to link your name with your phone.
       if (userInfo) {
         await this.sendMessage(
           twilioFrom,
-          '✅ Your phone is already registered!\n\nYou can start sending and receiving payments.'
+          '*REGISTRATION STATUS: ACTIVE*\n\nYour phone number is already registered.\nYou can send and receive payments.\n\nType HELP for available commands.'
         );
         return;
       }
@@ -157,18 +167,19 @@ Register at our web app to link your name with your phone.
 
       await this.sendMessage(
         twilioFrom,
-        `📝 *Registration Process*
+        `*REGISTRATION REQUIRED*
 
-To complete registration:
+To complete your registration:
+
 1. Visit: http://localhost:3000
-2. Enter your name and THIS phone number: ${normalizedPhone}
-3. Leave wallet fields empty to create new wallet
-4. Save your private key securely!
+2. Enter your name and phone number: ${normalizedPhone}
+3. Generate a new wallet or import existing one
+4. Store your private key securely
 
-✨ After registration, you can:
-• Check balance: BALANCE
-• Send payments by name: PAY Pavan 10
-• Send by phone: PAY +1234567890 10
+After registration you can:
+- Check balance: BALANCE
+- Send by name: PAY Pavan 10
+- Send by phone: PAY +1234567890 10
         `.trim()
       );
     } catch (error) {
@@ -188,7 +199,7 @@ To complete registration:
       if (!userInfo) {
         await this.sendMessage(
           twilioFrom,
-          '❌ Your phone is not registered.\n\nRegister at: http://localhost:3000\nEnter your name, phone, and create a wallet!'
+          '*ACCOUNT NOT FOUND*\n\nYour phone number is not registered.\n\nRegister at: http://localhost:3000\nEnter your name, phone number, and create a wallet.\n\nType HELP for more information.'
         );
         return;
       }
@@ -205,23 +216,23 @@ To complete registration:
       const history = await movementService.getTransactionHistory(address);
 
       await this.sendMessage(
-        from,
-        `💰 *Your Balance*
+        twilioFrom,
+        `*ACCOUNT BALANCE*
 
 Name: ${name}
 Balance: ${balanceFormatted} MOVE
 Address: ${address.substring(0, 10)}...
 
-📊 Transactions:
-• Sent: ${history.sent}
-• Received: ${history.received}
+TRANSACTION SUMMARY:
+Sent: ${history.sent}
+Received: ${history.received}
         `.trim()
       );
     } catch (error) {
       logger.error('Error handling balance check:', error);
       await this.sendMessage(
         twilioFrom,
-        '❌ Could not fetch balance. Please try again later.'
+        '*ERROR*\n\nUnable to retrieve balance at this time.\nPlease try again later.'
       );
     }
   }
@@ -253,7 +264,7 @@ Address: ${address.substring(0, 10)}...
         } else {
           await this.sendMessage(
             twilioFrom,
-            `❌ Recipient "${recipient}" not found.\n\nMake sure the name or phone number is correct.`
+            `*RECIPIENT NOT FOUND*\n\nRecipient "${recipient}" is not registered.\n\nVerify the name or phone number is correct.`
           );
           return;
         }
@@ -264,7 +275,7 @@ Address: ${address.substring(0, 10)}...
       if (isNaN(amountFloat) || amountFloat <= 0) {
         await this.sendMessage(
           twilioFrom,
-          '❌ Invalid amount.\n\nAmount must be a positive number.'
+          '*INVALID AMOUNT*\n\nAmount must be a positive number.\n\nExample: PAY Dad 10'
         );
         return;
       }
@@ -283,7 +294,7 @@ Address: ${address.substring(0, 10)}...
       if (!recipientAddress) {
         await this.sendMessage(
           twilioFrom,
-          `❌ Recipient ${recipientName || recipientPhone} is not registered.\n\nThey need to register first.`
+          `*RECIPIENT NOT REGISTERED*\n\nRecipient ${recipientName || recipientPhone} is not registered on ChatterPay.\n\nThey must register before receiving payments.`
         );
         return;
       }
@@ -292,7 +303,7 @@ Address: ${address.substring(0, 10)}...
       const displayName = recipientName || recipientPhone;
       await this.sendMessage(
         twilioFrom,
-        `⏳ Processing payment of ${amount} MOVE to ${displayName}...\n\nPlease wait.`
+        `*PAYMENT PROCESSING*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\n\nPlease wait...`
       );
 
       // Get sender's private key from storage
@@ -301,7 +312,7 @@ Address: ${address.substring(0, 10)}...
       if (!senderPrivateKey) {
         await this.sendMessage(
           twilioFrom,
-          `❌ *Payment Failed*\n\nYour account doesn't have a private key stored.\n\nTo enable WhatsApp payments:\n1. Visit: http://localhost:3000\n2. Re-register with your private key\n3. Or use API: POST /api/send`
+          `*PAYMENT FAILED*\n\nPrivate key not found for your account.\n\nTo enable WhatsApp payments:\n1. Visit: http://localhost:3000\n2. Re-register with your private key\n\nAlternatively, use API endpoint: POST /api/send`
         );
         return;
       }
@@ -314,15 +325,16 @@ Address: ${address.substring(0, 10)}...
           amount
         );
 
+        const txHash = result.transactionHash;
         await this.sendMessage(
           twilioFrom,
-          `✅ *Payment Sent!*\n\nAmount: ${amount} MOVE\nTo: ${displayName}\nTx: ${result.hash.substring(0, 10)}...${result.hash.slice(-6)}\n\nView: https://explorer.movementnetwork.xyz/txn/${result.hash}`
+          `*PAYMENT SUCCESSFUL*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\nTransaction: ${txHash.substring(0, 10)}...${txHash.slice(-6)}\n\nView details:\nhttps://explorer.movementnetwork.xyz/txn/${txHash}`
         );
       } catch (txError) {
         logger.error('Transaction failed:', txError);
         await this.sendMessage(
           twilioFrom,
-          `❌ *Transaction Failed*\n\n${txError.message || 'Please check your balance and try again.'}`
+          `*TRANSACTION FAILED*\n\n${txError.message || 'Please verify your balance and try again.'}`
         );
         return;
       }
@@ -330,7 +342,7 @@ Address: ${address.substring(0, 10)}...
       logger.error('Error handling payment:', error);
       await this.sendMessage(
         twilioFrom,
-        '❌ Payment failed. Please try again later.'
+        '*PAYMENT ERROR*\n\nUnable to process payment at this time.\nPlease try again later.'
       );
     }
   }
@@ -350,23 +362,24 @@ Address: ${address.substring(0, 10)}...
 
         await this.sendMessage(
           twilioFrom,
-          `✅ *Account Status: Active*
+          `*ACCOUNT STATUS: ACTIVE*
 
 Name: ${name}
-
 Phone: ${normalizedPhone}
 Address: ${address.substring(0, 10)}...${address.slice(-6)}
 Balance: ${balanceFormatted} MOVE
 
-You can send and receive payments!
+Account is ready for transactions.
           `.trim()
         );
       } else {
         await this.sendMessage(
           twilioFrom,
-          `📱 *Account Status: Not Registered*
+          `*ACCOUNT STATUS: NOT REGISTERED*
 
-Send REGISTER to get started!
+Your phone number is not registered.
+
+Send REGISTER to begin setup.
           `.trim()
         );
       }
@@ -374,7 +387,7 @@ Send REGISTER to get started!
       logger.error('Error checking status:', error);
       await this.sendMessage(
         twilioFrom,
-        '❌ Could not check status. Please try again later.'
+        '*ERROR*\n\nUnable to retrieve status at this time.\nPlease try again later.'
       );
     }
   }
