@@ -328,7 +328,7 @@ Received: ${history.received}
         const txHash = result.transactionHash;
         await this.sendMessage(
           twilioFrom,
-          `*PAYMENT SUCCESSFUL*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\nTransaction: ${txHash.substring(0, 10)}...${txHash.slice(-6)}\n\nView details:\nhttps://explorer.movementnetwork.xyz/txn/${txHash}`
+          `*PAYMENT SUCCESSFUL*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\nTransaction: ${txHash.substring(0, 10)}...${txHash.slice(-6)}\n\nView details:\nhttps://explorer.movementnetwork.xyz/txn/${txHash}?network=bardock+testnet`
         );
       } catch (txError) {
         logger.error('Transaction failed:', txError);
