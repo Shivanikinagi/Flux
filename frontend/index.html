@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            background: #ECE5DD;
+            background: #0B141A;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,9 +22,9 @@
         }
 
         .container {
-            background: white;
+            background: #1F2C34;
             border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
             padding: 40px;
             max-width: 500px;
             width: 100%;
@@ -34,7 +34,7 @@
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+            background: linear-gradient(135deg, #00A884 0%, #008069 100%);
             border-radius: 12px;
             color: white;
         }
@@ -47,49 +47,50 @@
         }
 
         .logo p {
-            color: #D9FDD3;
+            color: #D1F4DD;
             font-size: 1.1em;
         }
 
         .registered-users {
-            background: #F0F2F5;
+            background: #0B141A;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 30px;
             max-height: 300px;
             overflow-y: auto;
+            border: 1px solid #2A3942;
         }
 
         .registered-users h3 {
-            color: #075E54;
+            color: #00A884;
             margin-bottom: 15px;
             font-size: 1.2em;
             font-weight: 600;
         }
 
         .user-card {
-            background: white;
+            background: #202C33;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
             border-left: 4px solid #25D366;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .user-card h4 {
-            color: #075E54;
+            color: #E9EDEF;
             margin-bottom: 8px;
             font-weight: 600;
         }
 
         .user-card p {
-            color: #667781;
+            color: #8696A0;
             font-size: 0.9em;
             margin: 3px 0;
         }
 
         .no-users {
-            color: #8696A0;
+            color: #667781;
             text-align: center;
             padding: 20px;
         }
@@ -100,7 +101,7 @@
 
         label {
             display: block;
-            color: #075E54;
+            color: #E9EDEF;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 0.95em;
@@ -109,23 +110,29 @@
         input {
             width: 100%;
             padding: 15px;
-            border: 2px solid #D1D7DB;
+            border: 2px solid #2A3942;
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
-            background: #FFFFFF;
+            background: #202C33;
+            color: #E9EDEF;
         }
 
         input:focus {
             outline: none;
             border-color: #25D366;
+            background: #2A3942;
+        }
+
+        input::placeholder {
+            color: #667781;
         }
 
         .btn {
             width: 100%;
             padding: 15px;
             background: #25D366;
-            color: white;
+            color: #0B141A;
             border: none;
             border-radius: 8px;
             font-size: 1.1em;
@@ -141,7 +148,8 @@
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            background: #8696A0;
+            background: #3B4A54;
+            color: #667781;
         }
 
         .message {
@@ -152,45 +160,46 @@
         }
 
         .message.success {
-            background: #D9FDD3;
-            color: #075E54;
-            border: 1px solid #25D366;
+            background: #054D3B;
+            color: #D1F4DD;
+            border: 1px solid #00A884;
         }
 
         .message.error {
-            background: #FEECEC;
-            color: #B91C1C;
-            border: 1px solid #EF4444;
+            background: #571A1A;
+            color: #FFC0C0;
+            border: 1px solid #D32F2F;
         }
 
         .wallet-info {
-            background: #F7F8FA;
+            background: #0B141A;
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
             display: none;
-            border: 1px solid #D1D7DB;
+            border: 1px solid #2A3942;
         }
 
         .wallet-info h3 {
-            color: #075E54;
+            color: #00A884;
             margin-bottom: 15px;
             font-weight: 600;
         }
 
         .wallet-address {
-            background: white;
+            background: #202C33;
             padding: 15px;
             border-radius: 8px;
             word-break: break-all;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
             margin-bottom: 15px;
-            border: 1px solid #D1D7DB;
+            border: 1px solid #2A3942;
+            color: #E9EDEF;
         }
 
         .private-key {
-            background: #FFF3CD;
+            background: #3B2F00;
             padding: 15px;
             border-radius: 8px;
             border: 2px solid #FFC107;
@@ -198,22 +207,23 @@
         }
 
         .private-key strong {
-            color: #856404;
+            color: #FFE082;
         }
 
         .private-key code {
             display: block;
             margin-top: 10px;
             padding: 10px;
-            background: white;
+            background: #202C33;
             border-radius: 5px;
             word-break: break-all;
             font-size: 0.85em;
-            border: 1px solid #D1D7DB;
+            border: 1px solid #2A3942;
+            color: #E9EDEF;
         }
 
         .copy-btn {
-            background: #128C7E;
+            background: #00A884;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -225,19 +235,19 @@
         }
 
         .copy-btn:hover {
-            background: #075E54;
+            background: #008069;
         }
 
         .instructions {
-            background: #D9FDD3;
+            background: #054D3B;
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
-            border: 1px solid #25D366;
+            border: 1px solid #00A884;
         }
 
         .instructions h4 {
-            color: #075E54;
+            color: #D1F4DD;
             margin-bottom: 15px;
             font-weight: 600;
         }
@@ -248,11 +258,11 @@
 
         .instructions li {
             margin-bottom: 10px;
-            color: #3B4A54;
+            color: #8696A0;
         }
 
         .loader {
-            border: 3px solid #F0F2F5;
+            border: 3px solid #2A3942;
             border-top: 3px solid #25D366;
             border-radius: 50%;
             width: 30px;
