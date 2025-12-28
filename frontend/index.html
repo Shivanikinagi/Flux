@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatterPay - Register</title>
+    <title>Flux - Register</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #ECE5DD;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -23,8 +23,8 @@
 
         .container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             padding: 40px;
             max-width: 500px;
             width: 100%;
@@ -33,22 +33,27 @@
         .logo {
             text-align: center;
             margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+            border-radius: 12px;
+            color: white;
         }
 
         .logo h1 {
-            color: #667eea;
+            color: white;
             font-size: 2.5em;
             margin-bottom: 10px;
+            font-weight: 500;
         }
 
         .logo p {
-            color: #666;
+            color: #D9FDD3;
             font-size: 1.1em;
         }
 
         .registered-users {
-            background: #f5f5f5;
-            border-radius: 10px;
+            background: #F0F2F5;
+            border-radius: 8px;
             padding: 20px;
             margin-bottom: 30px;
             max-height: 300px;
@@ -56,9 +61,10 @@
         }
 
         .registered-users h3 {
-            color: #667eea;
+            color: #075E54;
             margin-bottom: 15px;
             font-size: 1.2em;
+            font-weight: 600;
         }
 
         .user-card {
@@ -66,22 +72,24 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #25D366;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .user-card h4 {
-            color: #333;
-            margin-bottom: 5px;
+            color: #075E54;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .user-card p {
-            color: #666;
+            color: #667781;
             font-size: 0.9em;
             margin: 3px 0;
         }
 
         .no-users {
-            color: #999;
+            color: #8696A0;
             text-align: center;
             padding: 20px;
         }
@@ -92,7 +100,7 @@
 
         label {
             display: block;
-            color: #333;
+            color: #075E54;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 0.95em;
@@ -101,69 +109,73 @@
         input {
             width: 100%;
             padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            border: 2px solid #D1D7DB;
+            border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
+            background: #FFFFFF;
         }
 
         input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #25D366;
         }
 
         .btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #25D366;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: background-color 0.2s;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            background: #20BD5C;
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            background: #8696A0;
         }
 
         .message {
             margin-top: 20px;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 8px;
             display: none;
         }
 
         .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #D9FDD3;
+            color: #075E54;
+            border: 1px solid #25D366;
         }
 
         .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #FEECEC;
+            color: #B91C1C;
+            border: 1px solid #EF4444;
         }
 
         .wallet-info {
-            background: #f8f9fa;
+            background: #F7F8FA;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-top: 20px;
             display: none;
+            border: 1px solid #D1D7DB;
         }
 
         .wallet-info h3 {
-            color: #667eea;
+            color: #075E54;
             margin-bottom: 15px;
+            font-weight: 600;
         }
 
         .wallet-address {
@@ -171,16 +183,17 @@
             padding: 15px;
             border-radius: 8px;
             word-break: break-all;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 0.9em;
             margin-bottom: 15px;
+            border: 1px solid #D1D7DB;
         }
 
         .private-key {
-            background: #fff3cd;
+            background: #FFF3CD;
             padding: 15px;
             border-radius: 8px;
-            border: 2px solid #ffc107;
+            border: 2px solid #FFC107;
             margin-bottom: 15px;
         }
 
@@ -196,10 +209,11 @@
             border-radius: 5px;
             word-break: break-all;
             font-size: 0.85em;
+            border: 1px solid #D1D7DB;
         }
 
         .copy-btn {
-            background: #667eea;
+            background: #128C7E;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -207,18 +221,25 @@
             cursor: pointer;
             font-size: 0.9em;
             margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #075E54;
         }
 
         .instructions {
-            background: #e3f2fd;
+            background: #D9FDD3;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             margin-top: 20px;
+            border: 1px solid #25D366;
         }
 
         .instructions h4 {
-            color: #1976d2;
+            color: #075E54;
             margin-bottom: 15px;
+            font-weight: 600;
         }
 
         .instructions ol {
@@ -227,12 +248,12 @@
 
         .instructions li {
             margin-bottom: 10px;
-            color: #555;
+            color: #3B4A54;
         }
 
         .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid #F0F2F5;
+            border-top: 3px solid #25D366;
             border-radius: 50%;
             width: 30px;
             height: 30px;
@@ -255,7 +276,7 @@
             </a>
         </div>
         <div class="logo">
-            <h1>🌟 ChatterPay</h1>
+            <h1>Flux</h1>
             <p>WhatsApp Crypto Payments on Movement Network</p>
         </div>
 
