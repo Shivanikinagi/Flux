@@ -254,5 +254,5 @@ function copyPrivateKey() {
 window.addEventListener('load', () => {
     // Clear any old localStorage to allow fresh registration
     // Users can save their keys separately if needed
-    console.log('ChatterPay registration page loaded');
+    console.log('Flux registration page loaded');
 });

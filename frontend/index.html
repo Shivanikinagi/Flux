@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flux - Register</title>
+    <title>Flux - Pay Anyone from WhatsApp</title>
     <style>
         * {
             margin: 0;
@@ -14,85 +14,235 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             background: #0B141A;
+            color: #E9EDEF;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
             min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #0B141A 0%, #1F2C34 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(37, 211, 102, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(37, 211, 102, 0.1);
+            border: 1px solid #25D366;
+            border-radius: 20px;
+            color: #25D366;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .hero h1 .highlight {
+            color: #25D366;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: #8696A0;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .feature-pills {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pill {
+            padding: 10px 20px;
+            background: #202C33;
+            border-radius: 25px;
+            border: 1px solid #2A3942;
+            color: #E9EDEF;
+            font-size: 0.95em;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            padding: 16px 40px;
+            background: #25D366;
+            color: #0B141A;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: #20BD5C;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 16px 40px;
+            background: transparent;
+            color: #E9EDEF;
+            border: 2px solid #2A3942;
+            border-radius: 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            border-color: #25D366;
+            color: #25D366;
+        }
+
+        /* Registration Section */
+        .register-section {
+            background: #1F2C34;
+            padding: 60px 20px;
+            display: none;
+        }
+
+        .register-section.active {
+            display: block;
         }
 
         .container {
-            background: #1F2C34;
-            border-radius: 12px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .logo {
+        .section-header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, #00A884 0%, #008069 100%);
-            border-radius: 12px;
-            color: white;
+            margin-bottom: 50px;
         }
 
-        .logo h1 {
-            color: white;
+        .section-header h2 {
             font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 500;
+            margin-bottom: 15px;
+            color: #E9EDEF;
         }
 
-        .logo p {
-            color: #D1F4DD;
+        .section-header p {
+            color: #8696A0;
             font-size: 1.1em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2.5em;
+            }
         }
 
         .registered-users {
             background: #0B141A;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            max-height: 300px;
-            overflow-y: auto;
+            border-radius: 12px;
+            padding: 25px;
             border: 1px solid #2A3942;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         .registered-users h3 {
-            color: #00A884;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            font-weight: 600;
+            color: #25D366;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .user-card {
             background: #202C33;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             border-left: 4px solid #25D366;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .user-card:hover {
+            transform: translateX(5px);
         }
 
         .user-card h4 {
             color: #E9EDEF;
-            margin-bottom: 8px;
-            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
         .user-card p {
             color: #8696A0;
             font-size: 0.9em;
-            margin: 3px 0;
+            margin: 5px 0;
         }
 
         .no-users {
             color: #667781;
             text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
+        }
+
+        .form-card {
+            background: #202C33;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #2A3942;
+        }
+
+        .form-card h3 {
+            color: #25D366;
+            margin-bottom: 25px;
+            font-size: 1.3em;
         }
 
         .form-group {
@@ -103,7 +253,7 @@
             display: block;
             color: #E9EDEF;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 0.95em;
         }
 
@@ -111,51 +261,58 @@
             width: 100%;
             padding: 15px;
             border: 2px solid #2A3942;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1em;
-            transition: border-color 0.3s;
-            background: #202C33;
+            transition: all 0.3s;
+            background: #0B141A;
             color: #E9EDEF;
         }
 
         input:focus {
             outline: none;
             border-color: #25D366;
-            background: #2A3942;
+            background: #1F2C34;
         }
 
         input::placeholder {
             color: #667781;
         }
 
-        .btn {
+        small {
+            display: block;
+            margin-top: 5px;
+            color: #8696A0;
+            font-size: 0.85em;
+        }
+
+        .btn-submit {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background: #25D366;
             color: #0B141A;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s;
+            margin-top: 10px;
         }
 
-        .btn:hover {
+        .btn-submit:hover {
             background: #20BD5C;
+            transform: translateY(-2px);
         }
 
-        .btn:disabled {
+        .btn-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            background: #3B4A54;
-            color: #667781;
         }
 
         .message {
             margin-top: 20px;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             display: none;
         }
 
@@ -173,20 +330,19 @@
 
         .wallet-info {
             background: #0B141A;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 25px;
+            border-radius: 10px;
             margin-top: 20px;
             display: none;
-            border: 1px solid #2A3942;
+            border: 1px solid #25D366;
         }
 
-        .wallet-info h3 {
-            color: #00A884;
+        .wallet-info h4 {
+            color: #25D366;
             margin-bottom: 15px;
-            font-weight: 600;
         }
 
-        .wallet-address {
+        .wallet-address, .private-key {
             background: #202C33;
             padding: 15px;
             border-radius: 8px;
@@ -194,30 +350,6 @@
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
             margin-bottom: 15px;
-            border: 1px solid #2A3942;
-            color: #E9EDEF;
-        }
-
-        .private-key {
-            background: #3B2F00;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #FFC107;
-            margin-bottom: 15px;
-        }
-
-        .private-key strong {
-            color: #FFE082;
-        }
-
-        .private-key code {
-            display: block;
-            margin-top: 10px;
-            padding: 10px;
-            background: #202C33;
-            border-radius: 5px;
-            word-break: break-all;
-            font-size: 0.85em;
             border: 1px solid #2A3942;
             color: #E9EDEF;
         }
@@ -230,7 +362,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.9em;
-            margin-top: 10px;
             transition: background-color 0.2s;
         }
 
@@ -238,37 +369,14 @@
             background: #008069;
         }
 
-        .instructions {
-            background: #054D3B;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-            border: 1px solid #00A884;
-        }
-
-        .instructions h4 {
-            color: #D1F4DD;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .instructions ol {
-            margin-left: 20px;
-        }
-
-        .instructions li {
-            margin-bottom: 10px;
-            color: #8696A0;
-        }
-
         .loader {
             border: 3px solid #2A3942;
             border-top: 3px solid #25D366;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 20px auto;
             display: none;
         }
 
@@ -276,117 +384,233 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature {
+            background: #202C33;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2A3942;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .feature h3 {
+            color: #25D366;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: #8696A0;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #202C33;
+            color: #E9EDEF;
+            border: 1px solid #2A3942;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+            display: none;
+        }
+
+        .back-btn.show {
+            display: block;
+        }
+
+        .back-btn:hover {
+            background: #2A3942;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div style="text-align: right; margin-bottom: 10px;">
-            <a href="/networks.html" style="color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px; font-size: 0.9em;">
-                🌐 Network Settings
-            </a>
-        </div>
-        <div class="logo">
-            <h1>Flux</h1>
-            <p>WhatsApp Crypto Payments on Movement Network</p>
-        </div>
+    <!-- Back Button -->
+    <button class="back-btn" id="backBtn" onclick="showHero()">← Back to Home</button>
 
-        <!-- Registered Users List -->
-        <div class="registered-users" id="registeredUsers">
-            <h3>👥 Registered Users</h3>
-            <div id="usersList">
-                <p class="no-users">No users registered yet. Add your first user below!</p>
-            </div>
-        </div>
-
-        <h3 style="color: #667eea; margin-bottom: 20px;">➕ Add New User</h3>
+    <!-- Hero Section -->
+    <section class="hero" id="heroSection">
+        <div class="badge">Built on Movement Network</div>
+        <h1>Pay <span class="highlight">anyone</span> from WhatsApp</h1>
+        <p>Send crypto in chat — secure, encrypted, no wallet setup.</p>
         
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="name">👤 Your Name</label>
-                <input 
-                    type="text" 
-                    id="name" 
-                    placeholder="Enter your name" 
-                    required
-                    maxlength="50"
-                >
-                <small style="color: #666;">This will be displayed when sending/receiving payments</small>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">📱 WhatsApp Phone Number</label>
-                <input 
-                    type="tel" 
-                    id="phone" 
-                    placeholder="+1234567890" 
-                    required
-                    pattern="\+[1-9]\d{1,14}"
-                    title="Enter phone in E.164 format: +1234567890"
-                >
-                <small style="color: #666;">Format: +[country code][number] (e.g., +919545296699)</small>
-            </div>
-
-            <div class="form-group">
-                <label for="walletAddress">🔑 Wallet Address (Optional)</label>
-                <input 
-                    type="text" 
-                    id="walletAddress" 
-                    placeholder="0x... or leave empty to create new wallet"
-                    pattern="0x[a-fA-F0-9]{64}"
-                >
-                <small style="color: #666;">Leave empty to create a new wallet automatically</small>
-            </div>
-
-            <div class="form-group" id="privateKeyGroup" style="display: none;">
-                <label for="privateKeyInput">🔐 Private Key (Required if using existing wallet)</label>
-                <input 
-                    type="password" 
-                    id="privateKeyInput" 
-                    placeholder="0x..."
-                >
-                <small style="color: #666;">Only needed if you entered a wallet address above</small>
-            </div>
-
-            <button type="submit" class="btn" id="registerBtn">
-                Create Wallet & Register
-            </button>
-        </form>
-
-        <div class="loader" id="loader"></div>
-
-        <div class="message" id="message"></div>
-
-        <div class="wallet-info" id="walletInfo">
-            <h3>✅ Wallet Created Successfully!</h3>
-            
-            <div>
-                <strong>Your Wallet Address:</strong>
-                <div class="wallet-address" id="walletAddress"></div>
-                <button class="copy-btn" onclick="copyAddress()">📋 Copy Address</button>
-            </div>
-
-            <div class="private-key">
-                <strong>⚠️ IMPORTANT: Save Your Private Key</strong>
-                <code id="privateKey"></code>
-                <button class="copy-btn" onclick="copyPrivateKey()">📋 Copy Private Key</button>
-                <p style="margin-top: 10px; color: #856404; font-size: 0.9em;">
-                    Never share this key! Store it in a secure location.
-                </p>
-            </div>
+        <div class="feature-pills">
+            <div class="pill">🔒 Secure</div>
+            <div class="pill">⚡ No wallet setup</div>
+            <div class="pill">✅ On chain receipts</div>
         </div>
 
-        <div class="instructions">
-            <h4>📝 Next Steps:</h4>
-            <ol>
-                <li>Save your private key securely (you'll need it to send payments)</li>
-                <li>Send a WhatsApp message to: <strong>+14155238886</strong></li>
-                <li>Type <strong>REGISTER</strong> to complete verification</li>
-                <li>Check your balance with <strong>BALANCE</strong></li>
-                <li>Send payments with <strong>PAY +phonenumber amount</strong></li>
-            </ol>
+        <div class="cta-buttons">
+            <button class="btn-primary" onclick="showRegister()">Get Started</button>
+            <a href="#features" class="btn-secondary">Learn More</a>
         </div>
-    </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">💬</div>
+                <h3>WhatsApp Native</h3>
+                <p>Send payments directly through WhatsApp chat. No app switching required.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔐</div>
+                <h3>Blockchain Secure</h3>
+                <p>All transactions verified on Movement Network blockchain.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">👤</div>
+                <h3>Name-Based</h3>
+                <p>Send money using contact names. No need to remember wallet addresses.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section class="register-section" id="registerSection">
+        <div class="container">
+            <div class="section-header">
+                <h2>Register Your Account</h2>
+                <p>Link your WhatsApp number and create your crypto wallet</p>
+            </div>
+
+            <div class="two-column">
+                <!-- Registered Users List -->
+                <div class="registered-users" id="registeredUsers">
+                    <h3>
+                        <span>👥</span>
+                        <span>Registered Users</span>
+                    </h3>
+                    <div id="usersList">
+                        <p class="no-users">No users registered yet. Be the first!</p>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="form-card">
+                    <h3>Create Your Wallet</h3>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="name">👤 Your Name</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                placeholder="John Doe" 
+                                required
+                                maxlength="50"
+                            >
+                            <small>This name will be visible to others when sending payments</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">📱 WhatsApp Number</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                placeholder="+1234567890" 
+                                required
+                                pattern="\+[1-9]\d{1,14}"
+                            >
+                            <small>Format: +[country][number] (e.g., +919545296699)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="walletAddress">🔑 Wallet Address (Optional)</label>
+                            <input 
+                                type="text" 
+                                id="walletAddress" 
+                                placeholder="Leave empty to create new wallet"
+                                pattern="0x[a-fA-F0-9]{64}"
+                            >
+                            <small>Leave empty to auto-generate a new wallet</small>
+                        </div>
+
+                        <div class="form-group" id="privateKeyGroup" style="display: none;">
+                            <label for="privateKeyInput">🔐 Private Key</label>
+                            <input 
+                                type="password" 
+                                id="privateKeyInput" 
+                                placeholder="0x..."
+                            >
+                            <small>Required only if using existing wallet</small>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="registerBtn">
+                            Create Wallet & Register
+                        </button>
+
+                        <div class="loader" id="loader"></div>
+                        <div class="message" id="message"></div>
+
+                        <div class="wallet-info" id="walletInfo">
+                            <h4>✅ Wallet Created Successfully!</h4>
+                            <div>
+                                <strong>Address:</strong>
+                                <div class="wallet-address" id="newAddress"></div>
+                                <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <strong style="color: #FFE082;">⚠️ Private Key (Save this securely!):</strong>
+                                <div class="private-key" id="newPrivateKey"></div>
+                                <button class="copy-btn" onclick="copyPrivateKey()">Copy Private Key</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <script src="app.js"></script>
+    <script>
+        function showRegister() {
+            document.getElementById('heroSection').style.display = 'none';
+            document.getElementById('registerSection').classList.add('active');
+            document.getElementById('backBtn').classList.add('show');
+            loadRegisteredUsers();
+        }
+
+        function showHero() {
+            document.getElementById('heroSection').style.display = 'flex';
+            document.getElementById('registerSection').classList.remove('active');
+            document.getElementById('backBtn').classList.remove('show');
+        }
+
+        function copyAddress() {
+            const address = document.getElementById('newAddress').textContent;
+            navigator.clipboard.writeText(address);
+            alert('Address copied to clipboard!');
+        }
+
+        function copyPrivateKey() {
+            const key = document.getElementById('newPrivateKey').textContent;
+            navigator.clipboard.writeText(key);
+            alert('Private Key copied to clipboard!');
+        }
+
+        // Show wallet address input handler
+        document.getElementById('walletAddress').addEventListener('input', function() {
+            const privateKeyGroup = document.getElementById('privateKeyGroup');
+            if (this.value.trim()) {
+                privateKeyGroup.style.display = 'block';
+            } else {
+                privateKeyGroup.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
