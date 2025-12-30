@@ -27,7 +27,7 @@ const consoleFormat = winston.format.combine(
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: logFormat,
-  defaultMeta: { service: 'chatterpay-backend' },
+  defaultMeta: { service: 'Flux-backend' },
   transports: [
     // Write all logs to console
     new winston.transports.Console({

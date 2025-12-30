@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * ChatterPay Integration Test Script
+ * Flux Integration Test Script
  * Tests the complete flow: register phone → send payment
  */
 
@@ -33,7 +33,7 @@ async function sleep(ms) {
 
 async function main() {
   log('\n' + '='.repeat(60), 'cyan');
-  log('🧪 ChatterPay Integration Tests', 'cyan');
+  log('🧪 Flux Integration Tests', 'cyan');
   log('='.repeat(60), 'cyan');
 
   const nodeUrl = process.env.MOVEMENT_NODE_URL || 'https://testnet.movementnetwork.xyz/v1';

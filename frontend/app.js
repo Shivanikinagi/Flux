@@ -7,8 +7,8 @@ const registerBtn = document.getElementById('registerBtn');
 const loader = document.getElementById('loader');
 const message = document.getElementById('message');
 const walletInfo = document.getElementById('walletInfo');
-const walletAddress = document.getElementById('walletAddress');
-const privateKey = document.getElementById('privateKey');
+const walletAddress = document.getElementById('newAddress') || document.getElementById('walletAddress');
+const privateKey = document.getElementById('newPrivateKey') || document.getElementById('privateKey');
 const usersList = document.getElementById('usersList');
 
 // Load and display registered users

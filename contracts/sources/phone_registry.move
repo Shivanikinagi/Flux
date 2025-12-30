@@ -1,4 +1,4 @@
-module ChatterPay::phone_registry {
+module Flux::phone_registry {
     use std::vector;
     use std::signer;
     use aptos_framework::coin;
@@ -190,20 +190,20 @@ module ChatterPay::phone_registry {
 }
 
 #[test_only]
-module ChatterPay::phone_registry_tests {
+module Flux::phone_registry_tests {
     use std::signer;
     use aptos_framework::account;
     use aptos_framework::coin;
     use aptos_framework::aptos_coin;
     use aptos_framework::aptos_coin::AptosCoin;
     use aptos_framework::timestamp;
-    use ChatterPay::phone_registry;
+    use Flux::phone_registry;
 
     // Test phone numbers (hashed)
     const PHONE1: vector<u8> = vector[1, 2, 3, 4];
     const PHONE2: vector<u8> = vector[5, 6, 7, 8];
 
-    #[test(registry = @ChatterPay, user1 = @0x123, user2 = @0x456, aptos_framework = @aptos_framework)]
+    #[test(registry = @Flux, user1 = @0x123, user2 = @0x456, aptos_framework = @aptos_framework)]
     fun test_register_and_payment(
         registry: &signer,
         user1: &signer,
@@ -248,7 +248,7 @@ module ChatterPay::phone_registry_tests {
         coin::destroy_mint_cap(mint_cap);
     }
 
-    #[test(registry = @ChatterPay, user1 = @0x123, aptos_framework = @aptos_framework)]
+    #[test(registry = @Flux, user1 = @0x123, aptos_framework = @aptos_framework)]
     fun test_update_user(registry: &signer, user1: &signer, aptos_framework: &signer) {
         // Setup test environment
         let registry_addr = signer::address_of(registry);

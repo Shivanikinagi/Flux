@@ -1,7 +1,7 @@
 {
-  "name": "chatterpay-backend",
+  "name": "Flux-backend",
   "version": "1.0.0",
-  "description": "ChatterPay Backend - WhatsApp Crypto Payments on Movement Network",
+  "description": "Flux Backend - WhatsApp Crypto Payments on Movement Network",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -18,7 +18,7 @@
     "movement",
     "blockchain"
   ],
-  "author": "ChatterPay Team",
+  "author": "Flux Team",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",

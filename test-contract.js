@@ -21,7 +21,7 @@ function hashPhoneNumber(phoneNumber) {
 
 async function testContract() {
   try {
-    console.log('🚀 Testing ChatterPay Contract on Movement Network\n');
+    console.log('🚀 Testing Flux Contract on Movement Network\n');
 
     // Load account
     const account = new AptosAccount(new HexString(PRIVATE_KEY).toUint8Array());

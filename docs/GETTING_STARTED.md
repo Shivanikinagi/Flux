@@ -1,6 +1,6 @@
-# ChatterPay - Step by Step Setup Guide
+# Flux - Step by Step Setup Guide
 
-This guide will walk you through setting up ChatterPay from scratch.
+This guide will walk you through setting up Flux from scratch.
 
 ---
 
@@ -46,8 +46,8 @@ sudo apt-get install -y nodejs
 
 ```bash
 # Option 1: Clone repository
-git clone https://github.com/yourusername/ChatterPay.git
-cd ChatterPay
+git clone https://github.com/yourusername/Flux.git
+cd Flux
 
 # Option 2: Or use the files provided
 cd whatsapp_movement
@@ -147,7 +147,7 @@ cd ../contracts
 movement move compile
 ```
 
-You should see: "BUILDING ChatterPay"
+You should see: "BUILDING Flux"
 
 ### Step 3: Run Tests
 
@@ -160,7 +160,7 @@ All tests should pass ✅
 ### Step 4: Deploy Contract
 
 ```bash
-movement move publish --named-addresses ChatterPay=default
+movement move publish --named-addresses Flux=default
 ```
 
 When prompted:
@@ -229,7 +229,7 @@ npm start
 
 You should see:
 ```
-🚀 ChatterPay server running on port 3000
+🚀 Flux server running on port 3000
 📡 Network: Movement Testnet
 📝 Contract: 0x...
 ```
@@ -452,7 +452,7 @@ If you run into issues:
 
 3. **Join our Discord** (link)
 
-4. **Email:** support@chatterpay.app
+4. **Email:** support@Flux.app
 
 ---
 
@@ -476,6 +476,6 @@ If you run into issues:
 
 **Congratulations! 🎉**
 
-You now have a fully functional ChatterPay system running locally!
+You now have a fully functional Flux system running locally!
 
 *Last Updated: December 24, 2025*

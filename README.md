@@ -1,10 +1,10 @@
-# ChatterPay: WhatsApp-based Crypto Payments on Movement Network
+# Flux: WhatsApp-based Crypto Payments on Movement Network
 
-![ChatterPay Banner](https://via.placeholder.com/1200x300/4A90E2/FFFFFF?text=ChatterPay+%7C+WhatsApp+Crypto+Payments)
+![Flux Banner](https://via.placeholder.com/1200x300/4A90E2/FFFFFF?text=Flux+%7C+WhatsApp+Crypto+Payments)
 
 ## 📱 Overview
 
-ChatterPay is a WhatsApp-based cryptocurrency payment system built on the **Movement Network**. It enables users to send and receive MOVE tokens using simple WhatsApp commands, without needing to know blockchain addresses.
+Flux is a WhatsApp-based cryptocurrency payment system built on the **Movement Network**. It enables users to send and receive MOVE tokens using simple WhatsApp commands, without needing to know blockchain addresses.
 
 ### Key Features:
 
@@ -17,7 +17,7 @@ ChatterPay is a WhatsApp-based cryptocurrency payment system built on the **Move
 
 ## 🏗️ Architecture
 
-ChatterPay consists of three main components:
+Flux consists of three main components:
 
 1. **Smart Contract**: Move language contract on Movement Network for phone registry and payments
 2. **Backend Server**: Node.js/Express server handling API requests and WhatsApp webhooks
@@ -51,8 +51,8 @@ ChatterPay consists of three main components:
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/ChatterPay.git
-cd ChatterPay
+git clone https://github.com/yourusername/Flux.git
+cd Flux
 ```
 
 2. **Install Backend Dependencies**
@@ -134,7 +134,7 @@ movement move compile
 movement move test
 
 # Deploy to testnet
-movement move publish --named-addresses ChatterPay=default
+movement move publish --named-addresses Flux=default
 ```
 
 4. **Update Configuration**
@@ -162,7 +162,7 @@ ngrok http 3000
 # Webhook URL: https://your-ngrok-url.ngrok.io/webhook
 ```
 
-## 📱 Using ChatterPay via WhatsApp
+## 📱 Using Flux via WhatsApp
 
 1. **Join Twilio WhatsApp Sandbox**
    - Send the join code to your Twilio WhatsApp number
@@ -220,7 +220,7 @@ Twilio WhatsApp webhook (used by Twilio)
 ## 📊 Project Structure
 
 ```
-ChatterPay/
+Flux/
 ├── contracts/              # Move smart contracts
 │   ├── sources/
 │   │   ├── phone_registry.move

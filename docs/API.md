@@ -1,9 +1,9 @@
-# ChatterPay API Documentation
+# Flux API Documentation
 
 ## Base URL
 ```
 http://localhost:3000
-https://api.chatterpay.app (Production)
+https://api.Flux.app (Production)
 ```
 
 ## Authentication
@@ -22,7 +22,7 @@ Check if the server is running.
 ```json
 {
   "status": "online",
-  "service": "ChatterPay API",
+  "service": "Flux API",
   "version": "1.0.0",
   "timestamp": "2025-12-24T10:30:00.000Z",
   "network": "Movement Testnet"
@@ -211,7 +211,7 @@ Display available commands.
 
 **Response:**
 ```
-🌟 ChatterPay Commands
+ Flux Commands
 
 📱 REGISTER - Register your phone
 💰 BALANCE - Check your balance
@@ -443,7 +443,7 @@ curl http://localhost:3000/api/balance/0x789abc...
 
 For API issues or questions:
 - GitHub Issues: [Link]
-- Email: support@chatterpay.app
+- Email: support@Flux.app
 - Discord: [Link]
 
 ---

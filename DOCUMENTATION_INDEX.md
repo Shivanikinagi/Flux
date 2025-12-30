@@ -1,6 +1,6 @@
-# ChatterPay - Complete Documentation Index
+# Flux - Complete Documentation Index
 
-Welcome to ChatterPay! This index will guide you to the right documentation based on your needs.
+Welcome to Flux! This index will guide you to the right documentation based on your needs.
 
 ---
 
@@ -222,7 +222,7 @@ PROJECT_SUMMARY.md → ROADMAP.md → PROJECT_DELIVERY.md
 - Check `README.md` FAQ section
 - Search GitHub Issues
 - Ask on Discord
-- Email: support@chatterpay.app
+- Email: support@Flux.app
 
 ---
 
@@ -320,7 +320,7 @@ Can't find what you need?
 2. **Check** related docs in same folder
 3. **Review** examples in `docs/API.md`
 4. **Ask** on GitHub Issues
-5. **Contact** support@chatterpay.app
+5. **Contact** support@Flux.app
 
 ---
 

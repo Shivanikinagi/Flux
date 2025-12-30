@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * ChatterPay Smart Contract Deployment Script
+ * Flux Smart Contract Deployment Script
  * Deploys the phone_registry module to Movement Network
  */
 
@@ -39,7 +39,7 @@ function executeCommand(command, description) {
 
 async function main() {
   log('='.repeat(60), 'blue');
-  log('🚀 ChatterPay Smart Contract Deployment', 'cyan');
+  log('🚀 Flux Smart Contract Deployment', 'cyan');
   log('='.repeat(60), 'blue');
 
   const contractsDir = path.join(__dirname, '..', 'contracts');
@@ -88,7 +88,7 @@ async function main() {
 
     // Step 5: Publish the module
     log('\n[5/6] Publishing smart contract to Movement Network...', 'blue');
-    const publishCommand = 'movement move publish --named-addresses ChatterPay=default --assume-yes';
+    const publishCommand = 'movement move publish --named-addresses Flux=default --assume-yes';
     const publishOutput = executeCommand(publishCommand, 'Contract deployment');
 
     // Extract contract address from output
@@ -120,7 +120,7 @@ async function main() {
         contractAddress,
         deployedAt: new Date().toISOString(),
         network: 'movement-testnet',
-        module: 'ChatterPay::phone_registry',
+        module: 'Flux::phone_registry',
       };
 
       const deploymentPath = path.join(__dirname, '..', 'deployment-info.json');

@@ -1,4 +1,4 @@
-# ChatterPay Contract Test Results
+# Flux Contract Test Results
 
 ## ✅ Deployment Status
 - **Network**: Movement Network Bardock Testnet  
@@ -105,7 +105,7 @@
 
 **All core functionalities are working as expected!**
 
-The ChatterPay smart contract has been successfully:
+The Flux smart contract has been successfully:
 1. ✅ Deployed to Movement Network testnet
 2. ✅ Initialized with Registry resource
 3. ✅ Tested user registration functionality

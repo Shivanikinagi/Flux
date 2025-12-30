@@ -21,5 +21,17 @@
     "address": "0x3566de4f00d973bf3acc2204154df534380e2f9a439fa7073cd2a8cfdd2bd215",
     "name": "hani",
     "privateKey": "0x94437dc9a66161d9ccb0b1a88fcfa67685d25e7c9b61a4b503b684bd70c8c659"
+  },
+  "mukund": {
+    "phone": "+919325565556",
+    "address": "0xf63bfb3638b5911796dc56dad87115fcb9a6b4627a4e22b5cc563f5790238a00",
+    "name": "Mukund",
+    "privateKey": "0xd4b914e8909107b1d7e9050289b61da2b69490ebfbe651a984382e5fe36f38b3"
+  },
+  "mrunal": {
+    "phone": "+918446632631",
+    "address": "0xd4065e5fc99521985d3dac58dd5a5b8cbea5070c5a91e575038fb2d70db14606",
+    "name": "Mrunal",
+    "privateKey": "0x4316295a986921082c726400066e5b9a15523d4ff610a4fc34ac967f5010a496"
   }
 }

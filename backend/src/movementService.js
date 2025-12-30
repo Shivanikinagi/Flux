@@ -88,20 +88,27 @@ class MovementService {
 
       logger.info(`Requesting funds for address: ${address}`);
 
-      // Use the CLI command via child_process as a workaround
+      // Use Movement Testnet Faucet (Chain ID: 250)
+      // Faucet endpoint: https://faucet.testnet.movementnetwork.xyz/
+      // RPC: https://testnet.movementnetwork.xyz/v1
       const { exec } = require('child_process');
       const util = require('util');
       const execPromise = util.promisify(exec);
 
+      // Fund with 1 MOVE (100000000 Octas) from Movement testnet faucet
       const command = `aptos account fund-with-faucet --account ${address} --amount 100000000 --url https://testnet.movementnetwork.xyz/v1 --faucet-url https://faucet.testnet.movementnetwork.xyz`;
+      
+      logger.info(`Funding command: ${command}`);
       
       const { stdout, stderr } = await execPromise(command);
       
       if (stderr && !stderr.includes('Result')) {
+        logger.error(`Faucet stderr: ${stderr}`);
         throw new Error(`Faucet command failed: ${stderr}`);
       }
 
       logger.info(`Account funded successfully: ${address}`);
+      logger.info(`Faucet output: ${stdout}`);
 
       return { 
         message: 'Account funded successfully',
@@ -214,27 +221,29 @@ class MovementService {
       }
 
       const account = this.getAccountFromPrivateKey(privateKeyHex);
-      const recipientPhoneHash = this.hashPhoneNumber(recipientPhone);
 
-      // Convert amount to octas (1 APT = 100000000 octas)
+      // Get recipient's address from name mapping
+      const nameMappingService = require('./nameMappingService');
+      const recipientInfo = await nameMappingService.getUserInfo(recipientPhone);
+      
+      if (!recipientInfo) {
+        throw new Error('Recipient not registered');
+      }
+
+      const recipientAddress = recipientInfo.address;
+
+      // Convert amount to octas (1 MOVE = 100000000 octas)
       const amountInOctas = Math.floor(parseFloat(amount) * 100000000);
 
-      logger.info(`Sending payment: ${amountInOctas} octas to ${recipientPhone}`);
+      logger.info(`Sending payment: ${amountInOctas} octas from ${account.address().hex()} to ${recipientAddress}`);
 
-      // TEMPORARILY SKIP registration check for testing
-      // const isRegistered = await this.isPhoneRegistered(recipientPhone);
-      // if (!isRegistered) {
-      //   throw new Error('Recipient phone number is not registered');
-      // }
-      logger.info('⚠️ Skipping registration check for testing');
-
+      // Direct coin transfer - no smart contract needed
       const payload = {
         type: 'entry_function_payload',
-        function: `${this.contractAddress}::phone_registry::send_payment`,
-        type_arguments: [],
+        function: '0x1::coin::transfer',
+        type_arguments: ['0x1::aptos_coin::AptosCoin'],
         arguments: [
-          this.contractAddress,
-          Array.from(recipientPhoneHash),
+          recipientAddress,
           amountInOctas.toString(),
         ],
       };
@@ -251,12 +260,20 @@ class MovementService {
       return {
         transactionHash: transactionRes.hash,
         sender: account.address().hex(),
+        recipientAddress: recipientAddress,
         recipientPhone: recipientPhone,
         amount: amount,
         amountInOctas: amountInOctas,
       };
     } catch (error) {
       logger.error('Error sending payment:', error);
+      logger.error('Payment details:', {
+        sender: privateKeyHex ? 'has private key' : 'no private key',
+        recipientPhone,
+        amount,
+        errorMessage: error.message,
+        errorStack: error.stack
+      });
       throw new Error(`Payment failed: ${error.message}`);
     }
   }

@@ -1,7 +1,7 @@
 {
-  "name": "chatterpay-scripts",
+  "name": "Flux-scripts",
   "version": "1.0.0",
-  "description": "Deployment and utility scripts for ChatterPay",
+  "description": "Deployment and utility scripts for Flux",
   "scripts": {
     "deploy": "node deploy.js",
     "initialize": "node initialize.js",

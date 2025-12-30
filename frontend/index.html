@@ -16,6 +16,17 @@
             background: #0B141A;
             color: #E9EDEF;
             overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        input, textarea {
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         /* Hero Section */
@@ -438,16 +449,286 @@
         .back-btn:hover {
             background: #2A3942;
         }
+
+        /* Benefits Section */
+        .benefits-section {
+            background: #1F2C34;
+            padding: 80px 20px;
+        }
+
+        .benefits-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .benefits-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .benefits-header h2 {
+            font-size: 2.8em;
+            color: #E9EDEF;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .benefits-header p {
+            font-size: 1.3em;
+            color: #8696A0;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .benefit-card {
+            background: #202C33;
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid #2A3942;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: #25D366;
+            transition: height 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            border-color: #25D366;
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.2);
+        }
+
+        .benefit-card:hover::before {
+            height: 100%;
+        }
+
+        .benefit-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .benefit-card h3 {
+            color: #E9EDEF;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .benefit-card p {
+            color: #8696A0;
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        .cta-center {
+            text-align: center;
+        }
+
+        .btn-primary-large {
+            display: inline-block;
+            padding: 20px 50px;
+            background: #25D366;
+            color: #0B141A;
+            border: none;
+            border-radius: 35px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary-large:hover {
+            background: #20BD5C;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Footer Section */
+        .footer {
+            background: #0B141A;
+            padding: 80px 20px 40px;
+            border-top: 1px solid #2A3942;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
+        }
+
+        .footer-section h3 {
+            color: #E9EDEF;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section p {
+            color: #8696A0;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .footer-link {
+            color: #8696A0;
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05em;
+        }
+
+        .footer-link:hover {
+            color: #25D366;
+        }
+
+        .waitlist-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .waitlist-input {
+            flex: 1;
+            padding: 14px 20px;
+            background: #202C33;
+            border: 1px solid #2A3942;
+            border-radius: 25px;
+            color: #E9EDEF;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .waitlist-input:focus {
+            border-color: #25D366;
+        }
+
+        .waitlist-input::placeholder {
+            color: #5A6D7A;
+        }
+
+        .waitlist-btn {
+            padding: 14px 30px;
+            background: #25D366;
+            color: #0B141A;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .waitlist-btn:hover {
+            background: #20BA5A;
+            transform: scale(1.05);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid #2A3942;
+            color: #8696A0;
+        }
+
+        .footer-bottom p {
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: #202C33;
+            border: 1px solid #2A3942;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8696A0;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.2em;
+        }
+
+        .social-link:hover {
+            background: #25D366;
+            color: #0B141A;
+            border-color: #25D366;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .waitlist-form {
+                flex-direction: column;
+            }
+        }
+
+        /* Hero Features Section */
+        .hero-features {
+            background: #0B141A;
+            padding: 60px 20px;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-btn:hover {
+            background: #2A3942;
+        }
     </style>
 </head>
 <body>
-    <!-- Back Button -->
-    <button class="back-btn" id="backBtn" onclick="showHero()">← Back to Home</button>
-
     <!-- Hero Section -->
     <section class="hero" id="heroSection">
         <div class="badge">Built on Movement Network</div>
-        <h1>Pay <span class="highlight">anyone</span> from WhatsApp</h1>
+        <h1><span style="color: #25D366; font-size: 1.1em;">Flux:</span> Pay <span class="highlight">anyone</span> from WhatsApp</h1>
         <p>Send crypto in chat — secure, encrypted, no wallet setup.</p>
         
         <div class="feature-pills">
@@ -457,28 +738,128 @@
         </div>
 
         <div class="cta-buttons">
-            <a href="register.html" class="btn-primary">Get Started</a>
-            <a href="#features" class="btn-secondary">Learn More</a>
+            <a href="https://wa.me/14155238886?text=Hey" class="btn-primary" target="_blank">Start on WhatsApp</a>
+            <a href="#benefits" class="btn-secondary">Learn More</a>
         </div>
+    </section>
 
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">💬</div>
-                <h3>WhatsApp Native</h3>
-                <p>Send payments directly through WhatsApp chat. No app switching required.</p>
+    <!-- Benefits Section -->
+    <section class="benefits-section" id="benefits">
+        <div class="benefits-container">
+            <div class="benefits-header">
+                <h2>Why Use WhatsApp for Crypto?</h2>
+                <p>The familiar messaging app you already use, now powered by blockchain</p>
             </div>
-            <div class="feature">
-                <div class="feature-icon">🔐</div>
-                <h3>Blockchain Secure</h3>
-                <p>All transactions verified on Movement Network blockchain.</p>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">💬</div>
+                    <h3>Familiar Interface</h3>
+                    <p>Use WhatsApp you already know. No new apps to learn.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h3>Instant Transactions</h3>
+                    <p>Blockchain transactions complete in seconds, 24/7.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">👤</div>
+                    <h3>Send by Name</h3>
+                    <p>Just type "PAY John 10" - no wallet addresses needed.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <h3>Bank-Level Security</h3>
+                    <p>Every transaction encrypted and verified on blockchain.</p>
+                </div>
             </div>
-            <div class="feature">
-                <div class="feature-icon">👤</div>
-                <h3>Name-Based</h3>
-                <p>Send money using contact names. No need to remember wallet addresses.</p>
+
+            <div class="cta-center">
+                <a href="https://wa.me/14155238886?text=Hey" class="btn-primary-large" target="_blank">Start Sending Crypto on WhatsApp</a>
             </div>
         </div>
     </section>
+
+    <!-- Original Features Section -->
+    <section class="hero-features">
+        <div class="features-container">
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">💬</div>
+                    <h3>WhatsApp Native</h3>
+                    <p>Send payments directly through WhatsApp chat. No app switching required.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Blockchain Secure</h3>
+                    <p>All transactions verified on Movement Network blockchain.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👤</div>
+                    <h3>Name-Based</h3>
+                    <p>Send money using contact names. No need to remember wallet addresses.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- About Flux -->
+                <div class="footer-section">
+                    <h3>Flux</h3>
+                    <p>Send crypto payments directly through WhatsApp. No app switching, no complex addresses - just simple, secure transactions.</p>
+                    <div class="social-links">
+                        <a href="https://twitter.com/fluxpay" class="social-link" target="_blank" title="Twitter">𝕏</a>
+                        <a href="https://github.com/fluxpay" class="social-link" target="_blank" title="GitHub">⚡</a>
+                        <a href="https://discord.gg/fluxpay" class="social-link" target="_blank" title="Discord">💬</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <div class="footer-links">
+                        <a href="https://wa.me/14155238886?text=Hey" class="footer-link" target="_blank">Start on WhatsApp</a>
+                        <a href="#" class="footer-link" onclick="alert('Documentation coming soon!'); return false;">Documentation</a>
+                        <a href="https://explorer.movementnetwork.xyz/?network=bardock+testnet" class="footer-link" target="_blank">Block Explorer</a>
+                        <a href="https://movementnetwork.xyz" class="footer-link" target="_blank">Movement Network</a>
+                    </div>
+                </div>
+
+                <!-- Contact & Support -->
+                <div class="footer-section">
+                    <h3>Contact & Support</h3>
+                    <div class="footer-links">
+                        <a href="mailto:support@fluxpay.io" class="footer-link">support@fluxpay.io</a>
+                        <a href="https://forms.gle/YOUR_FEEDBACK_FORM" class="footer-link" target="_blank">Send Feedback</a>
+                        <a href="https://wa.me/14155238886?text=HELP" class="footer-link" target="_blank">WhatsApp Support</a>
+                        <a href="#" class="footer-link" onclick="alert('FAQ page coming soon!'); return false;">FAQ</a>
+                    </div>
+                </div>
+
+                <!-- Join Waitlist -->
+                <div class="footer-section">
+                    <h3>Join the Waitlist</h3>
+                    <p>Be the first to know when we launch new features and partnerships.</p>
+                    <form class="waitlist-form" onsubmit="joinWaitlist(event)">
+                        <input type="email" class="waitlist-input" placeholder="your@email.com" required id="waitlistEmail">
+                        <button type="submit" class="waitlist-btn">Join</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2025 Flux. Powered by Movement Network.</p>
+                <p style="font-size: 0.9em; color: #5A6D7A;">⚠️ Testnet only. Do not send real funds. • <a href="#" style="color: #25D366; text-decoration: none;">Privacy Policy</a> • <a href="#" style="color: #25D366; text-decoration: none;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
 
     <!-- Registration Section -->
     <section class="register-section" id="registerSection">
@@ -600,6 +981,23 @@
             const key = document.getElementById('newPrivateKey').textContent;
             navigator.clipboard.writeText(key);
             alert('Private Key copied to clipboard!');
+        }
+
+        function joinWaitlist(event) {
+            event.preventDefault();
+            const email = document.getElementById('waitlistEmail').value;
+            
+            // Here you would typically send this to your backend
+            // For now, we'll just show a success message
+            alert(`Thank you! ${email} has been added to our waitlist. We'll notify you when we launch new features!`);
+            document.getElementById('waitlistEmail').value = '';
+            
+            // You can add backend integration here:
+            // fetch('/api/waitlist', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email })
+            // })
         }
 
         // Show wallet address input handler

@@ -56,6 +56,28 @@ class TwilioService {
       const command = body.trim().toUpperCase();
       const parts = body.trim().split(' ');
 
+      // Check for user session (awaiting confirmation)
+      const session = this.userSessions.get(normalizedPhone);
+      if (session && session.state === 'AWAITING_REGISTRATION_CONFIRM') {
+        const response = body.trim().toLowerCase();
+        if (response.includes('yes') || response.includes('please') || response.includes('sure') || response.includes('ok')) {
+          await this.handleRegister(from, normalizedPhone);
+          return;
+        } else if (response.includes('no')) {
+          this.userSessions.delete(normalizedPhone);
+          await this.sendMessage(from, 'No problem! Send any message when you\'re ready to create an account.');
+          return;
+        }
+      }
+
+      // Check if user is registered, if not offer auto-registration
+      const userInfo = await nameMappingService.getUserInfo(normalizedPhone);
+      
+      if (!userInfo && !['REGISTER', 'HELP'].includes(command)) {
+        await this.sendWelcomeAndAutoRegister(from, normalizedPhone, body);
+        return;
+      }
+
       // Command: HELP
       if (command === 'HELP') {
         await this.sendHelpMessage(from);
@@ -112,33 +134,58 @@ class TwilioService {
   }
 
   /**
+   * Welcome new user and offer auto-registration
+   */
+  async sendWelcomeAndAutoRegister(twilioFrom, normalizedPhone, originalMessage) {
+    try {
+      await this.sendMessage(
+        twilioFrom,
+        `Hello! 👋 I'm WattsPay AI, your crypto payment assistant.
+
+I notice you don't have an account yet. I can help you create one right now – it only takes a moment. Your account will be securely linked to your phone number for easy peer-to-peer transactions.
+
+Would you like me to proceed with account creation?`
+      );
+      
+      // Set session flag for auto-registration
+      this.userSessions.set(normalizedPhone, {
+        state: 'AWAITING_REGISTRATION_CONFIRM',
+        originalMessage: originalMessage,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      logger.error('Error in welcome message:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Send help message
    */
   async sendHelpMessage(to) {
     const helpMessage = `
-*CHATTERPAY - COMMAND REFERENCE*
+*Flux - COMMAND REFERENCE*
 
 *REGISTER*
-Register your phone number with the blockchain network
+Create your crypto wallet instantly via WhatsApp
 
 *BALANCE*
 Check your current wallet balance and transaction history
 
 *PAY <recipient> <amount>*
-Send payment to a registered user
+Send payment to any phone number
 Examples:
-  PAY Pavan 10
   PAY +1234567890 10
+  PAY 0.5 to send half a coin
 
 *STATUS*
-View your account registration status and details
+View your account details
 
 *HELP*
 Display this command reference
 
 ---
-NAME-BASED PAYMENTS:
-Register at http://localhost:3000 to link your name with your wallet and enable sending payments by name.
+Send any message to get started with automatic wallet creation!
     `.trim();
 
     await this.sendMessage(to, helpMessage);
@@ -155,35 +202,61 @@ Register at http://localhost:3000 to link your name with your wallet and enable 
       if (userInfo) {
         await this.sendMessage(
           twilioFrom,
-          '*REGISTRATION STATUS: ACTIVE*\n\nYour phone number is already registered.\nYou can send and receive payments.\n\nType HELP for available commands.'
+          '*ACCOUNT STATUS: ACTIVE*\n\nYour phone number is already registered.\nYou can send and receive payments.\n\nType HELP for available commands.'
         );
         return;
       }
 
-      // In a real implementation, you would:
-      // 1. Create or retrieve user's wallet
-      // 2. Store securely in database
-      // 3. Register on blockchain
-
+      // Auto-create wallet and register
+      await this.sendMessage(twilioFrom, 'Perfect! Let me generate a secure wallet for you...\n\nInitializing Movement blockchain connection...\nGenerating cryptographic keys with Move security...\nLinking to phone number securely...');
+      
+      // Generate wallet
+      const wallet = await movementService.generateWallet();
+      
+      // Fund the wallet
+      await movementService.fundAccount(wallet.address);
+      
+      // Extract name from phone or use default
+      const defaultName = normalizedPhone.substring(0, 15);
+      
+      // Register on blockchain
+      await movementService.registerUser(normalizedPhone, wallet.address, wallet.privateKey);
+      
+      // Store in name mapping
+      await nameMappingService.saveUserInfo({
+        name: defaultName,
+        phone: normalizedPhone,
+        address: wallet.address,
+        privateKey: wallet.privateKey
+      });
+      
+      // Get balance
+      const balance = await movementService.getBalance(wallet.address);
+      const balanceFormatted = (balance / 100000000).toFixed(2);
+      
       await this.sendMessage(
         twilioFrom,
-        `*REGISTRATION REQUIRED*
+        `✅ Account successfully created!
 
-To complete your registration:
+I've generated a new Movement wallet that's now linked to your phone number. Here are your details:
 
-1. Visit: http://localhost:3000
-2. Enter your name and phone number: ${normalizedPhone}
-3. Generate a new wallet or import existing one
-4. Store your private key securely
+*Wallet Address:*
+${wallet.address}
 
-After registration you can:
-- Check balance: BALANCE
-- Send by name: PAY Pavan 10
-- Send by phone: PAY +1234567890 10
-        `.trim()
+*Your cloud wallet is now active and ready for MOVE transactions.*
+
+You can send to anyone using just their phone number - no need for complex wallet addresses!
+
+*Current Balance: ${balanceFormatted} MOVE* (funded for testing)
+
+What would you like to do?`.trim()
       );
+      
+      // Clear session
+      this.userSessions.delete(normalizedPhone);
     } catch (error) {
       logger.error('Error handling registration:', error);
+      await this.sendMessage(twilioFrom, '❌ Registration failed. Please try again or contact support.');
       throw error;
     }
   }
@@ -294,7 +367,7 @@ Received: ${history.received}
       if (!recipientAddress) {
         await this.sendMessage(
           twilioFrom,
-          `*RECIPIENT NOT REGISTERED*\n\nRecipient ${recipientName || recipientPhone} is not registered on ChatterPay.\n\nThey must register before receiving payments.`
+          `*RECIPIENT NOT REGISTERED*\n\nRecipient ${recipientName || recipientPhone} is not registered on Flux.\n\nThey must register before receiving payments.`
         );
         return;
       }
@@ -400,7 +473,7 @@ Send REGISTER to begin setup.
       const message = type === 'received'
         ? `💰 *Payment Received!*
 
-Amount: ${amount} APT
+Amount: ${amount} MOVE
 From: ${from}
 
 Transaction: ${txHash.substring(0, 10)}...
@@ -409,7 +482,7 @@ Check balance: Send BALANCE
         `.trim()
         : `✅ *Payment Sent!*
 
-Amount: ${amount} APT
+Amount: ${amount} MOVE
 To: ${from}
 
 Transaction: ${txHash.substring(0, 10)}...

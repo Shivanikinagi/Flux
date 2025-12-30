@@ -1,4 +1,4 @@
-# ChatterPay Architecture & Flow Diagrams
+# Flux Architecture & Flow Diagrams
 
 ## System Architecture
 
@@ -365,7 +365,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                       ChatterPay System                         │
+│                       Flux System                         │
 │                                                                 │
 │  ┌───────────────┐          ┌───────────────┐                  │
 │  │  WhatsApp UI  │◄────────►│ Twilio API    │                  │

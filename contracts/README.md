@@ -1,6 +1,6 @@
-# ChatterPay Smart Contracts
+# Flux Smart Contracts
 
-This directory contains the Move smart contracts for ChatterPay, deployed on the Movement Network.
+This directory contains the Move smart contracts for Flux, deployed on the Movement Network.
 
 ## 📁 Structure
 
@@ -18,7 +18,7 @@ contracts/
 
 ### phone_registry.move
 
-The `phone_registry` module manages the core functionality of ChatterPay:
+The `phone_registry` module manages the core functionality of Flux:
 
 #### Key Features:
 - **Phone Number Registration**: Maps hashed phone numbers to blockchain addresses
@@ -203,14 +203,14 @@ movement move test
 ### 3. Deploy to Testnet
 
 ```bash
-movement move publish --named-addresses ChatterPay=default
+movement move publish --named-addresses Flux=default
 ```
 
 ### 4. Deploy to Mainnet
 
 ```bash
 movement move publish \
-  --named-addresses ChatterPay=<your-address> \
+  --named-addresses Flux=<your-address> \
   --network mainnet
 ```
 

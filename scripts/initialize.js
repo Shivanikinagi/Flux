@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * ChatterPay Registry Initialization Script
+ * Flux Registry Initialization Script
  * Initializes the phone registry smart contract
  */
 
@@ -25,7 +25,7 @@ function log(message, color = 'reset') {
 
 async function main() {
   log('\n' + '='.repeat(60), 'cyan');
-  log('🔧 ChatterPay Registry Initialization', 'cyan');
+  log('🔧 Flux Registry Initialization', 'cyan');
   log('='.repeat(60), 'cyan');
 
   try {

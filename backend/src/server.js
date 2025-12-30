@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
   const networkInfo = networkManager.getNetworkInfo();
   res.json({
     status: 'online',
-    service: 'ChatterPay API',
+    service: 'Flux API',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
     network: networkInfo.name,
@@ -333,7 +333,7 @@ apiRouter.get('/balance/:address', async (req, res) => {
       success: true,
       address: address,
       balance: balance,
-      balanceFormatted: `${balance / 100000000} APT`,
+      balanceFormatted: `${balance / 100000000} MOVE`,
     });
   } catch (error) {
     logger.error('Balance check error:', error);
@@ -399,7 +399,7 @@ app.get('/test-twilio', async (req, res) => {
   try {
     const result = await twilioService.sendMessage(
       process.env.TWILIO_PHONE_NUMBER,
-      'Test message from ChatterPay!'
+      'Test message from Flux!'
     );
 
     res.json({
@@ -465,7 +465,7 @@ app.use((req, res) => {
 
 // Start server
 const server = app.listen(PORT, () => {
-  logger.info(`🚀 ChatterPay server running on port ${PORT}`);
+  logger.info(`🚀 Flux server running on port ${PORT}`);
   logger.info(`📡 Network: Movement Testnet`);
   logger.info(`📝 Contract: ${process.env.CONTRACT_ADDRESS || 'Not configured'}`);
   logger.info(`📱 Twilio: ${process.env.TWILIO_PHONE_NUMBER || 'Not configured'}`);

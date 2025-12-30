@@ -1,7 +1,7 @@
-# ChatterPay Development Roadmap
+# Flux Development Roadmap
 
 ## 🎯 Project Overview
-ChatterPay is a WhatsApp-based cryptocurrency payment system built on Movement Network, enabling users to send and receive MOVE tokens using phone numbers instead of complex blockchain addresses.
+Flux is a WhatsApp-based cryptocurrency payment system built on Movement Network, enabling users to send and receive MOVE tokens using phone numbers instead of complex blockchain addresses.
 
 ---
 
@@ -434,7 +434,7 @@ POST   /webhook               - WhatsApp webhook
 
 ## 🎉 Conclusion
 
-ChatterPay is on track to revolutionize crypto payments through WhatsApp. The foundation is solid with comprehensive smart contracts, robust backend infrastructure, and seamless WhatsApp integration. 
+Flux is on track to revolutionize crypto payments through WhatsApp. The foundation is solid with comprehensive smart contracts, robust backend infrastructure, and seamless WhatsApp integration. 
 
 **Next Focus**: Testing, documentation, and advanced features to enhance user experience and security.
 

@@ -1,13 +1,13 @@
 [package]
-name = "ChatterPay"
+name = "Flux"
 version = "1.0.0"
-authors = ["ChatterPay Team"]
+authors = ["Flux Team"]
 
 [addresses]
-ChatterPay = "0x7a9ea50052a16a735b75491d961ac61d9eae45584c1f789a4d93d99132c240a9"
+Flux = "0x7a9ea50052a16a735b75491d961ac61d9eae45584c1f789a4d93d99132c240a9"
 
 [dev-addresses]
-ChatterPay = "0xCAFE"
+Flux = "0xCAFE"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-core.git"

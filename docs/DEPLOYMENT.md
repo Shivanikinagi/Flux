@@ -1,8 +1,8 @@
-# ChatterPay Deployment Guide
+# Flux Deployment Guide
 
 ## 📋 Prerequisites
 
-Before deploying ChatterPay, ensure you have:
+Before deploying Flux, ensure you have:
 
 - Node.js v18 or higher
 - npm v9 or higher
@@ -18,8 +18,8 @@ Before deploying ChatterPay, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ChatterPay.git
-cd ChatterPay
+git clone https://github.com/yourusername/Flux.git
+cd Flux
 ```
 
 ### 2. Install Movement CLI
@@ -59,7 +59,7 @@ movement account fund --account default
 cd contracts
 movement move compile
 movement move test
-movement move publish --named-addresses ChatterPay=default
+movement move publish --named-addresses Flux=default
 ```
 
 Copy the deployed contract address for later use.
@@ -174,8 +174,8 @@ sudo apt install -y certbot python3-certbot-nginx
 
 ```bash
 cd /var/www
-sudo git clone https://github.com/yourusername/ChatterPay.git
-cd ChatterPay
+sudo git clone https://github.com/yourusername/Flux.git
+cd Flux
 sudo chown -R $USER:$USER .
 
 cd backend
@@ -213,7 +213,7 @@ Create `ecosystem.config.js`:
 ```javascript
 module.exports = {
   apps: [{
-    name: 'chatterpay',
+    name: 'Flux',
     script: './src/server.js',
     instances: 'max',
     exec_mode: 'cluster',
@@ -237,14 +237,14 @@ pm2 startup
 ### 5. Configure Nginx
 
 ```bash
-sudo nano /etc/nginx/sites-available/chatterpay
+sudo nano /etc/nginx/sites-available/Flux
 ```
 
 Add configuration:
 ```nginx
 server {
     listen 80;
-    server_name api.chatterpay.app;
+    server_name api.Flux.app;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -262,7 +262,7 @@ server {
 
 Enable site:
 ```bash
-sudo ln -s /etc/nginx/sites-available/chatterpay /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/Flux /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl restart nginx
 ```
@@ -270,7 +270,7 @@ sudo systemctl restart nginx
 ### 6. Setup SSL
 
 ```bash
-sudo certbot --nginx -d api.chatterpay.app
+sudo certbot --nginx -d api.Flux.app
 ```
 
 ### 7. Configure Firewall
@@ -329,7 +329,7 @@ CMD ["node", "src/server.js"]
 version: '3.8'
 
 services:
-  chatterpay-api:
+  Flux-api:
     build: .
     ports:
       - "3000:3000"
@@ -341,7 +341,7 @@ services:
       - ./logs:/app/logs
     restart: unless-stopped
     networks:
-      - chatterpay-network
+      - Flux-network
 
   nginx:
     image: nginx:alpine
@@ -352,13 +352,13 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/nginx/ssl
     depends_on:
-      - chatterpay-api
+      - Flux-api
     restart: unless-stopped
     networks:
-      - chatterpay-network
+      - Flux-network
 
 networks:
-  chatterpay-network:
+  Flux-network:
     driver: bridge
 ```
 
@@ -385,20 +385,20 @@ docker-compose logs -f
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chatterpay-deployment
+  name: Flux-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: chatterpay
+      app: Flux
   template:
     metadata:
       labels:
-        app: chatterpay
+        app: Flux
     spec:
       containers:
-      - name: chatterpay
-        image: chatterpay:latest
+      - name: Flux
+        image: Flux:latest
         ports:
         - containerPort: 3000
         env:
@@ -406,7 +406,7 @@ spec:
           value: "production"
         envFrom:
         - secretRef:
-            name: chatterpay-secrets
+            name: Flux-secrets
 ```
 
 ### 2. Create Service
@@ -415,10 +415,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: chatterpay-service
+  name: Flux-service
 spec:
   selector:
-    app: chatterpay
+    app: Flux
   ports:
   - protocol: TCP
     port: 80
@@ -517,7 +517,7 @@ Configure monitoring to ping `/health` every minute.
 Create `.github/workflows/deploy.yml`:
 
 ```yaml
-name: Deploy ChatterPay
+name: Deploy Flux
 
 on:
   push:
@@ -546,11 +546,11 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /var/www/ChatterPay
+            cd /var/www/Flux
             git pull
             cd backend
             npm install
-            pm2 restart chatterpay
+            pm2 restart Flux
 ```
 
 ---
@@ -560,13 +560,13 @@ jobs:
 ### Server won't start
 ```bash
 # Check logs
-pm2 logs chatterpay
+pm2 logs Flux
 
 # Check port availability
 netstat -tulpn | grep 3000
 
 # Restart
-pm2 restart chatterpay
+pm2 restart Flux
 ```
 
 ### Webhook not working

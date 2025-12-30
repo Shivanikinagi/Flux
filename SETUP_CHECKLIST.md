@@ -1,4 +1,4 @@
-# 🔧 ChatterPay Setup Checklist
+# 🔧 Flux Setup Checklist
 
 ## ✅ What You Have:
 - [x] Twilio Account SID: AC9e0ab174606d7cdacbf2e794b5c57fd7

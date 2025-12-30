@@ -13,7 +13,6 @@ class NameMappingService {
 
     async initialize() {
         if (this.initialized) return;
-
         try {
             // Ensure data directory exists
             const dataDir = path.dirname(this.mappingFile);
