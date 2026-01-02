@@ -248,7 +248,11 @@ class MovementService {
         ],
       };
 
-      const txnRequest = await this.client.generateTransaction(account.address(), payload);
+      // Generate transaction with explicit gas parameters
+      const txnRequest = await this.client.generateTransaction(account.address(), payload, {
+        max_gas_amount: '200000',  // Set explicit gas limit
+        gas_unit_price: '100',      // Gas price in octas
+      });
       const signedTxn = await this.client.signTransaction(account, txnRequest);
       const transactionRes = await this.client.submitTransaction(signedTxn);
 
