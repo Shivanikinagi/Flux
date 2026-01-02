@@ -65,7 +65,11 @@ class TwilioService {
           return;
         } else if (response.includes('no')) {
           this.userSessions.delete(normalizedPhone);
-          await this.sendMessage(from, 'No problem! Send any message when you\'re ready to create an account.');
+          await this.sendMessage(from, `No worries at all! 😊
+
+Whenever you're ready to create a wallet and start sending MOVE, just send me any message. I'll be here to help!
+
+Have a great day! ✨`);
           return;
         }
       }
@@ -101,7 +105,17 @@ class TwilioService {
         if (parts.length < 3) {
           await this.sendMessage(
             from,
-            '❌ Invalid PAY command.\n\nUsage: PAY <name_or_phone> <amount>\nExample: PAY Pavan 10\nExample: PAY +1234567890 10'
+            `Oops! Let me help you with that. 💡
+
+To send a payment, use this format:
+*PAY [recipient] [amount]*
+
+📝 *Examples:*
+• PAY Mrunal 10
+• PAY Dad 5.5
+• PAY +919876543210 20
+
+Just type the recipient's name (or phone) and the amount. Easy!`
           );
           return;
         }
@@ -122,13 +136,22 @@ class TwilioService {
       // Unknown command
       await this.sendMessage(
         from,
-        '❓ Unknown command.\n\nSend HELP to see available commands.'
+        `Hmm, I didn't quite catch that! 🤔
+
+I can help you with:
+• Checking your balance
+• Sending payments to friends
+• Viewing your account
+
+Just send *HELP* to see everything I can do!`
       );
     } catch (error) {
       logger.error('Error handling incoming message:', error);
       await this.sendMessage(
         from,
-        '❌ An error occurred processing your request. Please try again later.'
+        `Oops! Something went wrong on my end. 😅
+
+Could you try that again? If the issue persists, just send *HELP* and we'll figure it out together!`
       );
     }
   }
@@ -140,11 +163,13 @@ class TwilioService {
     try {
       await this.sendMessage(
         twilioFrom,
-        `Hello! 👋 I'm WattsPay AI, your crypto payment assistant.
+        `Hey! 👋
 
-I notice you don't have an account yet. I can help you create one right now – it only takes a moment. Your account will be securely linked to your phone number for easy peer-to-peer transactions.
+I'm Flux AI, your crypto payment assistant.
 
-Would you like me to proceed with account creation?`
+I notice you don't have an account yet. I can help you create one right now - it only takes a moment. Your account will be securely linked to your phone number for easy peer-to-peer transactions.
+
+✨ Would you like me to proceed with account creation?`
       );
       
       // Set session flag for auto-registration
@@ -163,30 +188,30 @@ Would you like me to proceed with account creation?`
    * Send help message
    */
   async sendHelpMessage(to) {
-    const helpMessage = `
-*Flux - COMMAND REFERENCE*
+    const helpMessage = `Hey! 👋 Here's what I can help you with:
 
-*REGISTER*
-Create your crypto wallet instantly via WhatsApp
+━━━━━━━━━━━━━━━━━━━━━━━━
 
-*BALANCE*
-Check your current wallet balance and transaction history
+💰 *BALANCE*
+Check how much MOVE you have
 
-*PAY <recipient> <amount>*
-Send payment to any phone number
-Examples:
-  PAY +1234567890 10
-  PAY 0.5 to send half a coin
+💸 *PAY [name] [amount]*
+Send MOVE to anyone instantly
+_Examples:_
+• PAY Mrunal 10
+• PAY +919876543210 5
 
-*STATUS*
-View your account details
+👤 *STATUS*
+View your wallet details
 
-*HELP*
-Display this command reference
+🆕 *REGISTER*
+Create a new wallet (if needed)
 
----
-Send any message to get started with automatic wallet creation!
-    `.trim();
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ *Pro tip:* Just send payments by name - no wallet addresses needed!
+
+💬 Have questions? Just ask me naturally and I'll do my best to help!`;
 
     await this.sendMessage(to, helpMessage);
   }
@@ -202,13 +227,22 @@ Send any message to get started with automatic wallet creation!
       if (userInfo) {
         await this.sendMessage(
           twilioFrom,
-          '*ACCOUNT STATUS: ACTIVE*\n\nYour phone number is already registered.\nYou can send and receive payments.\n\nType HELP for available commands.'
+          `Hey! You're all set! ✅
+
+Your Flux wallet is already active and ready to go. You can send and receive MOVE payments anytime.
+
+💡 *Quick actions:*
+• Send *BALANCE* to check your funds
+• Send *PAY [name] [amount]* to send money
+• Send *HELP* to see all commands
+
+What would you like to do?`
         );
         return;
       }
 
       // Auto-create wallet and register
-      await this.sendMessage(twilioFrom, 'Perfect! Let me generate a secure wallet for you...\n\nInitializing Movement blockchain connection...\nGenerating cryptographic keys with Move security...\nLinking to phone number securely...');
+      await this.sendMessage(twilioFrom, 'Perfect! Let me generate a secure wallet for you...\n\n⚡ Initializing Movement blockchain connection...\n🔐 Generating cryptographic keys with Move security...\n📱 Linking to phone number securely...');
       
       // Generate wallet
       const wallet = await movementService.generateWallet();
@@ -236,20 +270,23 @@ Send any message to get started with automatic wallet creation!
       
       await this.sendMessage(
         twilioFrom,
-        `✅ Account successfully created!
+        `🎉 *Welcome to Flux!*
 
-I've generated a new Movement wallet that's now linked to your phone number. Here are your details:
+Your secure wallet is ready and live on Movement Network!
 
-*Wallet Address:*
-${wallet.address}
+──────────────────
+💰 *Balance:* ${balanceFormatted} MOVE
+🏦 *Wallet:* ${wallet.address.substring(0, 10)}...${wallet.address.slice(-8)}
+⛓️ *Network:* Movement Testnet
+──────────────────
 
-*Your cloud wallet is now active and ready for MOVE transactions.*
+✨ *What you can do:*
+• Send money: PAY [name] [amount]
+• Check balance: BALANCE
+• Account info: STATUS
+• Get help: HELP
 
-You can send to anyone using just their phone number - no need for complex wallet addresses!
-
-*Current Balance: ${balanceFormatted} MOVE* (funded for testing)
-
-What would you like to do?`.trim()
+Your funds are secured by Move language smart contracts on Movement blockchain. Start sending money by just typing their name!`.trim()
       );
       
       // Clear session
@@ -290,22 +327,35 @@ What would you like to do?`.trim()
 
       await this.sendMessage(
         twilioFrom,
-        `*ACCOUNT BALANCE*
+        `💰 *Your Flux Wallet*
 
-Name: ${name}
-Balance: ${balanceFormatted} MOVE
-Address: ${address.substring(0, 10)}...
+──────────────────
+👤 *Name:* ${name}
+💎 *Balance:* ${balanceFormatted} MOVE
+🏦 *Address:* ${address.substring(0, 10)}...${address.slice(-8)}
+⛓️ *Network:* Movement Testnet
+──────────────────
 
-TRANSACTION SUMMARY:
-Sent: ${history.sent}
-Received: ${history.received}
+📊 *Transaction Summary:*
+📤 Sent: ${history.sent}
+📥 Received: ${history.received}
+
+🔍 View on Explorer:
+https://explorer.movementnetwork.xyz/account/${address}?network=bardock+testnet
+
+✨ Ready to send payments? Just type:
+PAY [name] [amount]
         `.trim()
       );
     } catch (error) {
       logger.error('Error handling balance check:', error);
       await this.sendMessage(
         twilioFrom,
-        '*ERROR*\n\nUnable to retrieve balance at this time.\nPlease try again later.'
+        `Oops! I'm having trouble checking your balance right now. 😅
+
+The Movement Network might be busy. Could you try again in a moment?
+
+If this keeps happening, let me know!`
       );
     }
   }
@@ -348,7 +398,7 @@ Received: ${history.received}
       if (isNaN(amountFloat) || amountFloat <= 0) {
         await this.sendMessage(
           twilioFrom,
-          '*INVALID AMOUNT*\n\nAmount must be a positive number.\n\nExample: PAY Dad 10'
+          `Hmm, that amount doesn't look quite right. 🤔\n\nMake sure you're using a positive number like:\n• PAY Mrunal 10\n• PAY Dad 5.5\n\nWhat amount would you like to send?`
         );
         return;
       }
@@ -358,7 +408,11 @@ Received: ${history.received}
       if (!senderAddress) {
         await this.sendMessage(
           twilioFrom,
-          '❌ Your phone is not registered.\n\nSend REGISTER to get started.'
+          `Hey! Looks like you need a wallet first. 🏦
+
+No worries - I can create one for you right now! Just send *REGISTER* and we'll get you set up in seconds.
+
+Ready to start?`
         );
         return;
       }
@@ -367,7 +421,11 @@ Received: ${history.received}
       if (!recipientAddress) {
         await this.sendMessage(
           twilioFrom,
-          `*RECIPIENT NOT REGISTERED*\n\nRecipient ${recipientName || recipientPhone} is not registered on Flux.\n\nThey must register before receiving payments.`
+          `Hmm, looks like ${recipientName || recipientPhone} isn't on Flux yet. 🤔
+
+They'll need to create a wallet first before they can receive payments. Just ask them to send any message to this number and I'll help them get set up!
+
+It only takes a minute! ⚡`
         );
         return;
       }
@@ -376,7 +434,15 @@ Received: ${history.received}
       const displayName = recipientName || recipientPhone;
       await this.sendMessage(
         twilioFrom,
-        `*PAYMENT PROCESSING*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\n\nPlease wait...`
+        `Processing your transaction...
+
+💸 *Amount:* ${amount} MOVE
+👤 *To:* ${displayName}
+
+⚡ Verifying recipient wallet...
+🔐 Signing with your private key...
+⛓️ Broadcasting to Movement Network...
+⏳ Awaiting blockchain confirmation...`
       );
 
       // Get sender's private key from storage
@@ -401,13 +467,37 @@ Received: ${history.received}
         const txHash = result.transactionHash;
         await this.sendMessage(
           twilioFrom,
-          `*PAYMENT SUCCESSFUL*\n\nAmount: ${amount} MOVE\nRecipient: ${displayName}\nTransaction: ${txHash.substring(0, 10)}...${txHash.slice(-6)}\n\nView details:\nhttps://explorer.movementnetwork.xyz/txn/${txHash}?network=bardock+testnet`
+          `✅ *Transaction Successful!*
+
+I've just executed a live blockchain transaction!
+
+──────────────────
+📤 *From:* Your Flux wallet
+📥 *To:* ${displayName}
+💰 *Amount:* ${amount} MOVE
+⛓️ *Network:* Movement Testnet
+✨ *Status:* Confirmed on blockchain
+──────────────────
+
+🔗 *Transaction Hash:*
+${txHash.substring(0, 20)}...${txHash.slice(-10)}
+
+🔍 *View on Explorer:*
+https://explorer.movementnetwork.xyz/txn/${txHash}?network=bardock+testnet
+
+Your payment has been securely recorded on Movement blockchain! 🚀`
         );
       } catch (txError) {
         logger.error('Transaction failed:', txError);
         await this.sendMessage(
           twilioFrom,
-          `*TRANSACTION FAILED*\n\n${txError.message || 'Please verify your balance and try again.'}`
+          `❌ *Transaction Failed*
+
+Oops! The blockchain transaction couldn't be completed.
+
+⚠️ *Reason:* ${txError.message || 'Please verify your balance and try again.'}
+
+💡 *Tip:* Make sure you have enough MOVE tokens to cover both the payment and gas fees (usually ~0.0001 MOVE).`
         );
         return;
       }
@@ -415,7 +505,11 @@ Received: ${history.received}
       logger.error('Error handling payment:', error);
       await this.sendMessage(
         twilioFrom,
-        '*PAYMENT ERROR*\n\nUnable to process payment at this time.\nPlease try again later.'
+        `Oops! Something went wrong while processing your payment. 😅
+
+Don't worry - no funds were transferred. Could you try again?
+
+If the issue persists, send *BALANCE* to check your wallet status.`
       );
     }
   }
